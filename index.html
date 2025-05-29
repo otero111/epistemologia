@@ -13,13 +13,13 @@
             background-color: #000000;
             color: #E0E0E0;
             display: flex;
+            flex-direction: column; /* Para permitir que el footer se posicione abajo */
             justify-content: center;
-            align-items: flex-start; /* Alinea arriba para quizzes largos */
+            align-items: center; 
             min-height: 100vh;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            overflow-y: auto; /* Permite scroll si el contenido es muy largo */
         }
 
         .quiz-container {
@@ -28,14 +28,16 @@
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
             width: 100%;
-            max-width: 800px; /* Un poco más ancho para comodidad */
+            max-width: 800px; 
             border: 2px solid #00FFFF;
             margin-top: 20px;
             margin-bottom: 20px;
+            overflow-y: auto; /* Permite scroll interno si el contenido del quiz es muy largo */
+            max-height: calc(100vh - 100px); /* Ajusta para dejar espacio al footer */
         }
 
         .question-text {
-            font-size: 1.4em; /* Ajustado para más texto */
+            font-size: 1.4em; 
             margin-bottom: 25px;
             color: #FFFFFF;
             text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF;
@@ -95,7 +97,7 @@
             margin-top: 20px;
             padding: 15px;
             background-color: #222222;
-            border-left: 5px solid #FF073A; /* Borde rojo para incorrecto */
+            border-left: 5px solid #FF073A; 
             border-radius: 5px;
             color: #E0E0E0;
             font-size: 0.9em;
@@ -104,7 +106,7 @@
         .explanation strong {
             color: #FF073A;
         }
-        .explanation-correct { /* Para cuando se muestra la explicación de la correcta sin error */
+        .explanation-correct { 
             border-left: 5px solid #39FF14;
         }
         .explanation-correct strong {
@@ -143,11 +145,29 @@
             box-shadow: 0 0 15px #00FFFF;
         }
         
+        .footer {
+            margin-top: 30px;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #888;
+            text-align: center;
+        }
+        .footer a {
+            color: #00FFFF;
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .footer a:hover {
+            color: #39FF14;
+            text-shadow: 0 0 5px #39FF14;
+        }
+
         @media (max-width: 600px) {
             .quiz-container {
                 padding: 15px;
                 margin-top: 10px;
                 margin-bottom: 10px;
+                max-height: calc(100vh - 80px); /* Ajusta para pantallas pequeñas */
             }
             .question-text {
                 font-size: 1.1em;
@@ -158,6 +178,9 @@
             }
             .next-btn, .restart-btn {
                 width: 80%;
+            }
+            .footer {
+                font-size: 0.7em;
             }
         }
 
@@ -184,8 +207,19 @@
         </div>
     </div>
 
+    <footer class="footer">
+        <p>Hecho por Ricardo Otero | <a href="https://www.instagram.com/Ote.98_" target="_blank" rel="noopener noreferrer">Instagram: Ote.98_</a></p>
+    </footer>
+
     <script>
-        const questions = [
+        // Función para limpiar las citas de un texto
+        function removeCitations(text) {
+            if (typeof text !== 'string') return text;
+            // Regex para eliminar [cite: X] y espacios circundantes
+            return text.replace(/\s*\[cite:\s*\d+\]\s*/g, ' ').trim();
+        }
+
+        const rawQuestions = [
             // --- René Descartes (10 Preguntas) ---
             {
                 section: "René Descartes",
@@ -232,7 +266,7 @@
                     "Sustancia pensante (res cogitans) y Sustancia extensa (res extensa).",
                     "Apariencia y Realidad."
                 ],
-                correctAnswerIndex: 2, // c) Sustancia pensante (res cogitans) y Sustancia extensa (res extensa).
+                correctAnswerIndex: 2, 
                 explanation: "El dualismo cartesiano postula la existencia de dos tipos de sustancias radicalmente diferentes: Sustancia pensante (res cogitans): Corresponde a la mente, alma o yo. Su atributo esencial es el pensamiento. Es inmaterial, no ocupa espacio. [cite: 27, 28] Sustancia extensa (res extensa): Corresponde al cuerpo y a todo el mundo material. Su atributo esencial es la extensión (ocupar espacio). [cite: 29, 30] Descartes consideraba que estas dos sustancias eran distintas e independientes, aunque interactuaban en el ser humano a través de la glándula pineal. [cite: 30]"
             },
             {
@@ -265,10 +299,10 @@
                 options: [
                     "La regla de la evidencia. [cite: 46]",
                     "La regla del análisis.",
-                    "La regla de la síntesis. [cite: 46]", // La opción c) en el PDF es "La regla de la síntesis." - la correcta es b
+                    "La regla de la síntesis. [cite: 46]", 
                     "La regla de la enumeración. [cite: 47]"
                 ],
-                correctAnswerIndex: 1, // b) La regla del análisis.
+                correctAnswerIndex: 1, 
                 explanation: "La segunda regla del método cartesiano es el análisis. [cite: 48] Esta regla recomienda dividir cada una de las dificultades que se examinan en tantas partes como sea posible y en cuantas requiera su mejor solución. [cite: 48] Se trata de descomponer lo complejo en sus elementos más simples y fundamentales para entenderlo con claridad."
             },
             {
@@ -302,9 +336,9 @@
                     "La intuición intelectual. [cite: 65]",
                     "La deducción. [cite: 66]",
                     "La percepción sensible.",
-                    "Ordenar las ideas y representaciones. [cite: 66]" // Ojo, el PDF dice "d) Ordenar las ideas y representaciones." La correcta es c).
+                    "Ordenar las ideas y representaciones. [cite: 66]" 
                 ],
-                correctAnswerIndex: 2, // c) La percepción sensible.
+                correctAnswerIndex: 2, 
                 explanation: "El texto destaca que las dos funciones más importantes de la razón para Descartes son la intuición intelectual (captación directa e inmediata de verdades evidentes) y la deducción (inferencia de unas verdades a partir de otras). [cite: 67, 68] Además, se menciona que Descartes apunta al ordenamiento de las ideas y del pensamiento, lo cual es una función racional. [cite: 68] La percepción sensible, aunque fuente de ideas adventicias, es precisamente de lo que Descartes duda inicialmente y no la considera una función primordial de la razón para alcanzar el conocimiento verdadero, sino más bien una fuente potencial de engaño. [cite: 69]"
             },
 
@@ -1039,6 +1073,15 @@
             }
         ];
 
+        // Procesar las preguntas para quitarles las citas
+        const questions = rawQuestions.map(q => ({
+            ...q,
+            question: removeCitations(q.question),
+            options: q.options.map(opt => removeCitations(opt)),
+            explanation: removeCitations(q.explanation)
+        }));
+
+
         const questionTextElement = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
         const explanationElement = document.getElementById('explanation');
@@ -1057,7 +1100,7 @@
         let shuffledQuestions = [];
 
         function shuffleArray(array) {
-            let newArray = [...array]; // Crear una copia para no modificar el original
+            let newArray = [...array]; 
             for (let i = newArray.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
@@ -1076,6 +1119,7 @@
             scoreArea.style.display = 'block';
             nextBtn.style.display = 'none';
             explanationElement.style.display = 'none';
+            questionCounterElement.style.display = 'block'; // Asegurarse que el contador se muestre
             loadQuestion();
         }
 
@@ -1085,14 +1129,14 @@
             nextBtn.style.display = 'none'; 
 
             const currentQuestion = shuffledQuestions[currentQuestionIndex];
-            questionTextElement.innerHTML = `<strong>(${currentQuestion.section})</strong> ${currentQuestion.question}`; // Usar innerHTML para el strong
+            questionTextElement.innerHTML = `<strong>(${currentQuestion.section})</strong> ${currentQuestion.question}`; 
             questionCounterElement.textContent = `Pregunta ${currentQuestionIndex + 1} de ${shuffledQuestions.length}`;
             
             optionsContainer.innerHTML = ''; 
 
             currentQuestion.options.forEach((option, index) => {
                 const button = document.createElement('button');
-                button.innerHTML = option; // Usar innerHTML para las citas en las opciones
+                button.innerHTML = option; 
                 button.addEventListener('click', () => selectAnswer(index, button));
                 optionsContainer.appendChild(button);
             });
@@ -1112,16 +1156,15 @@
             if (selectedIndex === correctIndex) {
                 score++;
                 selectedButton.classList.add('correct');
-                explanationElement.classList.add('explanation-correct'); // Estilo verde para explicación de correcta
+                explanationElement.classList.add('explanation-correct'); 
                 scoreTextElement.textContent = `Puntuación: ${score}`;
             } else {
                 selectedButton.classList.add('incorrect');
                 optionsContainer.children[correctIndex].classList.add('correct');
-                explanationElement.classList.remove('explanation-correct'); // Asegurar estilo rojo para incorrecta
+                explanationElement.classList.remove('explanation-correct'); 
             }
 
             nextBtn.style.display = 'block';
-            // Scroll hacia el botón de siguiente o la explicación para mejor visibilidad
             explanationElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -1129,7 +1172,6 @@
             currentQuestionIndex++;
             if (currentQuestionIndex < shuffledQuestions.length) {
                 loadQuestion();
-                 // Scroll al inicio de la pregunta
                 questionCounterElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 showResults();
@@ -1154,4 +1196,3 @@
     </script>
 </body>
 </html>
-
