@@ -1,1198 +1,1196 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz de Filosofía Completo - Estilo Neón</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Desafío Epistemológico (Opción Múltiple)</title>
+   <style>
+       /* --- Estilos Generales y Tema Oscuro --- */
+       :root {
+           --color-fondo: #121212;
+           --color-superficie: #1e1e1e;
+           --color-borde: #333;
+           --texto-principal: #e0e0e0;
+           --texto-secundario: #a0a0a0;
+           --color-acento: #03dac6; /* Cyan verdoso */
+           --color-correcto: #4caf50; /* Verde */
+           --color-incorrecto: #cf6679; /* Rojo suave */
+       }
 
-        body {
-            font-family: arial;
-            background-color: #000000;
-            color: #E0E0E0;
-            display: flex;
-            flex-direction: column; /* Para permitir que el footer se posicione abajo */
-            justify-content: center;
-            align-items: center; 
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+       * {
+           box-sizing: border-box;
+           margin: 0;
+           padding: 0;
+       }
 
-        .quiz-container {
-            background-color: #1a1a1a;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
-            width: 100%;
-            max-width: 800px; 
-            border: 2px solid #00FFFF;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            overflow-y: auto; /* Permite scroll interno si el contenido del quiz es muy largo */
-            max-height: calc(100vh - 100px); /* Ajusta para dejar espacio al footer */
-        }
+       body {
+           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+           background-color: var(--color-fondo);
+           color: var(--texto-principal);
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           min-height: 100vh;
+           padding: 20px;
+       }
 
-        .question-text {
-            font-size: 1.4em; 
-            margin-bottom: 25px;
-            color: #FFFFFF;
-            text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF;
-            text-align: center;
-            line-height: 1.4;
-        }
-        .question-counter {
-            font-size: 0.9em;
-            color: #00FFFF;
-            text-align: right;
-            margin-bottom: 10px;
-        }
+       /* --- Contenedor Principal --- */
+       .quiz-container {
+           background-color: var(--color-superficie);
+           border-radius: 15px;
+           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+           width: 100%;
+           max-width: 800px;
+           overflow: hidden;
+           border: 1px solid var(--color-borde);
+       }
 
-        .options-container button {
-            display: block;
-            width: 100%;
+       .pantalla {
+           padding: 30px 40px;
+           transition: opacity 0.5s;
+       }
+
+       /* --- Pantalla de Inicio --- */
+       #pantalla-inicio h1 {
+           color: var(--color-acento);
+           text-align: center;
+           margin-bottom: 15px;
+           font-size: 2.2rem;
+           font-weight: 700;
+       }
+
+       #pantalla-inicio p {
+           text-align: center;
+           color: var(--texto-secundario);
+           margin-bottom: 30px;
+           font-size: 1.1rem;
+       }
+
+       .seleccion-documentos {
+           margin-bottom: 30px;
+       }
+
+       .seleccion-documentos h2 {
+           text-align: center;
+           margin-bottom: 20px;
+           font-weight: 500;
+       }
+
+       .opciones-docs {
+           display: flex;
+           flex-wrap: wrap;
+           justify-content: center;
+           gap: 15px;
+       }
+
+       .opciones-docs label {
+           background-color: var(--color-fondo);
+           border: 1px solid var(--color-borde);
+           padding: 10px 20px;
+           border-radius: 25px;
+           cursor: pointer;
+           transition: background-color 0.3s, border-color 0.3s;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           user-select: none;
+       }
+
+       .opciones-docs input[type="checkbox"] {
+           display: none;
+       }
+
+       .opciones-docs input[type="checkbox"]:checked + label {
+           background-color: var(--color-acento);
+           border-color: var(--color-acento);
+           color: var(--color-fondo);
+           font-weight: bold;
+       }
+
+       .opciones-docs label:hover {
+           background-color: #2a2a2a;
+       }
+
+       /* --- Botones --- */
+       .btn {
+           display: block;
+           width: 100%;
+           padding: 15px;
+           font-size: 1.2rem;
+           font-weight: bold;
+           color: var(--color-fondo);
+           background-color: var(--color-acento);
+           border: none;
+           border-radius: 8px;
+           cursor: pointer;
+           transition: transform 0.2s, box-shadow 0.2s;
+           margin-top: 20px;
+           text-align: center;
+       }
+
+       .btn:hover:not(:disabled) {
+           transform: translateY(-2px);
+           box-shadow: 0 4px 15px rgba(3, 218, 198, 0.2);
+       }
+       
+       .btn:disabled {
+           background-color: #555;
+           cursor: not-allowed;
+           color: #888;
+       }
+
+       /* --- Pantalla del Quiz --- */
+       #pantalla-quiz {
+           display: none;
+       }
+       
+       .quiz-header {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           margin-bottom: 30px;
+           color: var(--texto-secundario);
+           font-weight: bold;
+           flex-wrap: wrap;
+           gap: 10px;
+       }
+
+       .pregunta-wrapper {
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           gap: 15px;
+           margin-bottom: 30px;
+       }
+
+       #texto-pregunta {
+           font-size: 1.4rem;
+           line-height: 1.6;
+           text-align: center;
+           min-height: 100px;
+           flex-grow: 1;
+       }
+       
+       #btn-leer-pregunta {
+           background: none;
+           border: 1px solid var(--color-borde);
+           border-radius: 50%;
+           width: 44px;
+           height: 44px;
+           cursor: pointer;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           transition: background-color 0.3s, border-color 0.3s;
+           padding: 0;
+           flex-shrink: 0;
+       }
+
+       #btn-leer-pregunta:hover {
             background-color: #2a2a2a;
-            color: #E0E0E0;
-            border: 2px solid #00FFFF;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1em;
-            text-align: left;
-        }
+       }
+       
+       #btn-leer-pregunta.activo {
+           border-color: var(--color-acento);
+       }
 
-        .options-container button:hover:not(:disabled) {
-            background-color: #00FFFF;
-            color: #000000;
-            box-shadow: 0 0 15px #00FFFF;
-        }
-
-        .options-container button:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .correct {
-            background-color: #003300 !important;
-            color: #39FF14 !important;
-            border-color: #39FF14 !important;
-            text-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14, 0 0 15px #39FF14;
-            box-shadow: 0 0 10px #39FF14, 0 0 15px #39FF14;
-        }
-
-        .incorrect {
-            background-color: #330000 !important;
-            color: #FF073A !important;
-            border-color: #FF073A !important;
-            text-shadow: 0 0 5px #FF073A, 0 0 10px #FF073A, 0 0 15px #FF073A;
-            box-shadow: 0 0 10px #FF073A, 0 0 15px #FF073A;
-        }
-
-        .explanation {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #222222;
-            border-left: 5px solid #FF073A; 
-            border-radius: 5px;
-            color: #E0E0E0;
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-        .explanation strong {
-            color: #FF073A;
-        }
-        .explanation-correct { 
-            border-left: 5px solid #39FF14;
-        }
-        .explanation-correct strong {
-             color: #39FF14;
-        }
+       #btn-leer-pregunta svg {
+           width: 22px;
+           height: 22px;
+           fill: var(--texto-secundario);
+           transition: fill 0.3s;
+       }
+       
+       #btn-leer-pregunta.activo svg {
+           fill: var(--color-acento);
+       }
 
 
-        .score-text, .final-score-text {
-            font-size: 1.2em;
-            margin-top: 20px;
-            color: #00FFFF;
-            text-align: center;
-        }
-        .final-score-text {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-        }
+       .opciones-respuesta {
+           display: grid;
+           grid-template-columns: 1fr;
+           gap: 15px;
+       }
+       
+       @media (min-width: 600px) {
+           .opciones-respuesta {
+               grid-template-columns: 1fr 1fr;
+           }
+       }
 
-        .next-btn, .restart-btn {
-            display: block;
-            width: 50%;
-            margin: 20px auto 0;
-            padding: 15px;
-            background-color: #00FFFF;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
 
-        .next-btn:hover, .restart-btn:hover {
-            background-color: #00AAAA;
-            box-shadow: 0 0 15px #00FFFF;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            padding: 10px;
-            font-size: 0.8em;
-            color: #888;
-            text-align: center;
-        }
-        .footer a {
-            color: #00FFFF;
-            text-decoration: none;
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-        }
-        .footer a:hover {
-            color: #39FF14;
-            text-shadow: 0 0 5px #39FF14;
-        }
+       .opciones-respuesta .btn-opcion {
+           background-color: #333;
+           color: var(--texto-principal);
+           font-size: 1rem;
+           margin-top: 0;
+       }
+       .opciones-respuesta .btn-opcion:hover:not(:disabled) {
+           background-color: #444;
+       }
+       .opciones-respuesta .btn-opcion.correcto {
+           background-color: var(--color-correcto);
+           color: white;
+       }
+       .opciones-respuesta .btn-opcion.incorrecto {
+           background-color: var(--color-incorrecto);
+           color: white;
+       }
 
-        @media (max-width: 600px) {
-            .quiz-container {
-                padding: 15px;
-                margin-top: 10px;
-                margin-bottom: 10px;
-                max-height: calc(100vh - 80px); /* Ajusta para pantallas pequeñas */
-            }
-            .question-text {
-                font-size: 1.1em;
-            }
-            .options-container button {
-                font-size: 0.85em;
-                padding: 10px;
-            }
-            .next-btn, .restart-btn {
-                width: 80%;
-            }
-            .footer {
-                font-size: 0.7em;
-            }
-        }
+       #feedback {
+           margin-top: 30px;
+           padding: 20px;
+           border-radius: 8px;
+           text-align: center;
+           min-height: 150px;
+           border: 1px solid transparent;
+       }
 
-    </style>
+       #feedback.correcto {
+           border-color: var(--color-correcto);
+       }
+
+       #feedback.incorrecto {
+           border-color: var(--color-incorrecto);
+       }
+       
+       #feedback h3 {
+           margin-bottom: 10px;
+       }
+
+       #feedback .justificacion {
+           margin-top: 10px;
+           color: var(--texto-secundario);
+           font-style: italic;
+       }
+
+       #btn-siguiente {
+           background-color: var(--color-borde);
+           color: var(--texto-principal);
+           font-size: 1rem;
+           padding: 12px;
+           width: auto;
+           min-width: 180px;
+           margin-left: auto;
+           margin-right: auto;
+       }
+
+       /* --- Pantalla Final --- */
+       #pantalla-final {
+           display: none;
+           text-align: center;
+       }
+
+       #pantalla-final h2 {
+           font-size: 2.2rem;
+           margin-bottom: 20px;
+           color: var(--color-acento);
+       }
+
+       #mensaje-final {
+           font-size: 1.5rem;
+           margin-bottom: 15px;
+       }
+       
+       #puntuacion-final-texto {
+            font-size: 1.2rem;
+            color: var(--texto-secundario);
+            margin-bottom: 30px;
+       }
+       
+       #btn-reiniciar {
+           background-color: #333;
+           color: var(--texto-principal);
+       }
+
+   </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <div id="question-counter" class="question-counter"></div>
-        <div id="question-area">
-            <p id="question-text" class="question-text"></p>
-            <div id="options-container" class="options-container">
-            </div>
-        </div>
-        <div id="feedback-area">
-            <div id="explanation" class="explanation" style="display: none;"></div>
-        </div>
-        <div id="score-area">
-            <p id="score-text" class="score-text">Puntuación: 0</p>
-        </div>
-        <button id="next-btn" class="next-btn" style="display: none;">Siguiente Pregunta</button>
-        <div id="results-area" style="display: none;">
-            <p id="final-score-text" class="final-score-text"></p>
-            <button id="restart-btn" class="restart-btn">Reiniciar Quiz</button>
-        </div>
-    </div>
 
-    <footer class="footer">
-        <p>Hecho por Ricardo Otero | <a href="https://www.instagram.com/Ote.98_" target="_blank" rel="noopener noreferrer">Instagram: Ote.98_</a></p>
-    </footer>
+   <div class="quiz-container">
+       
+       <div id="pantalla-inicio" class="pantalla">
+           <h1>Desafío Epistemológico</h1>
+           <p>Pon a prueba tu conocimiento sobre las figuras clave de la Epistemología.</p>
+           
+           <div class="seleccion-documentos">
+               <h2>Elige las figuras a repasar:</h2>
+               <div class="opciones-docs" id="opciones-documentos">
+                   <!-- Las opciones se generarán dinámicamente con JS -->
+               </div>
+           </div>
 
-    <script>
-        // Función para limpiar las citas de un texto
-        function removeCitations(text) {
-            if (typeof text !== 'string') return text;
-            // Regex para eliminar [cite: X] y espacios circundantes
-            return text.replace(/\s*\[cite:\s*\d+\]\s*/g, ' ').trim();
+           <button id="btn-iniciar" class="btn">Comenzar Juego</button>
+           <p id="error-seleccion" style="color: var(--color-incorrecto); text-align: center; margin-top: 15px; display: none;">Por favor, selecciona al menos una figura.</p>
+       </div>
+
+       <div id="pantalla-quiz" class="pantalla">
+           <div class="quiz-header">
+               <span id="contador-pregunta">Pregunta X de Y</span>
+               <span id="preguntas-restantes">Quedan: Y</span>
+               <span id="puntuacion-actual">Puntuación: 0</span>
+           </div>
+           <div class="pregunta-wrapper">
+               <p id="texto-pregunta">Aquí va la pregunta...</p>
+               <button id="btn-leer-pregunta" title="Activar/Desactivar lectura en voz alta">
+                   <span id="icono-volumen-on">
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
+                   </span>
+                   <span id="icono-volumen-off" style="display: none;">
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg>
+                   </span>
+               </button>
+           </div>
+           <div id="opciones-respuesta" class="opciones-respuesta">
+               <!-- Botones de opciones se generan aquí -->
+           </div>
+           <div id="feedback">
+                </div>
+       </div>
+
+       <div id="pantalla-final" class="pantalla">
+           <h2>Fin del Juego</h2>
+           <p id="mensaje-final">¡Excelente!</p>
+           <p id="puntuacion-final-texto">Tu puntuación final es: X / Y</p>
+           <button id="btn-reiniciar" class="btn">Jugar de Nuevo</button>
+       </div>
+
+   </div>
+
+<script>
+   // --- BASE DE DATOS COMPLETA DE PREGUNTAS DE EPISTEMOLOGÍA ---
+   const preguntas_db = {
+    'Platón': [
+        {
+            'pregunta': '¿Cuál es la principal diferencia entre Doxa y Episteme para Platón?',
+            'opciones': [
+                'La Doxa es conocimiento de las Ideas y la Episteme del mundo sensible.',
+                'La Doxa es opinión no fundamentada sobre el mundo sensible y la Episteme es conocimiento verdadero y justificado sobre el mundo de las Ideas.',
+                'Ambas son formas de conocimiento verdadero, pero la Episteme es más difícil de alcanzar.',
+                'La Doxa se basa en la razón y la Episteme en los sentidos.'
+            ],
+            'respuestaCorrecta': 'La Doxa es opinión no fundamentada sobre el mundo sensible y la Episteme es conocimiento verdadero y justificado sobre el mundo de las Ideas.',
+            'justificacion': 'Correcto. Para Platón, la Doxa es la opinión, un saber no fundamentado sobre el mundo sensible, individual y cambiante. La Episteme, en cambio, es el conocimiento científico, certero y riguroso que se alcanza a través de la razón y tiene por objeto las "formas" o Ideas inmutables y universales del mundo inteligible.'
+        },
+        {
+            'pregunta': 'La teoría de la reminiscencia de Platón postula que conocer es:',
+            'opciones': [
+                'Aprender algo completamente nuevo a través de los sentidos.',
+                'Crear conocimiento a partir de la imaginación.',
+                'Recordar las Ideas que el alma ya conocía antes de encarnar en un cuerpo.',
+                'Recibir conocimiento directamente de los dioses.'
+            ],
+            'respuestaCorrecta': 'Recordar las Ideas que el alma ya conocía antes de encarnar en un cuerpo.',
+            'justificacion': 'Correcto. La reminiscencia es el proceso por el cual el alma, al entrar en contacto con el mundo sensible, recuerda las formas perfectas (Ideas) que contempló en el mundo inteligible antes de caer en la "prisión" del cuerpo. Por lo tanto, aprender es en realidad recordar un conocimiento previo.'
+        },
+        {
+            'pregunta': 'En la concepción tripartita del alma de Platón, ¿qué parte es responsable de la razón y el gobierno de las otras?',
+            'opciones': [
+                'El alma apetitiva.',
+                'El alma pasional o irascible.',
+                'El alma racional.',
+                'El alma sensible.'
+            ],
+            'respuestaCorrecta': 'El alma racional.',
+            'justificacion': 'Correcto. El alma racional (representada por el cochero en el mito del carro alado) es la función superior, inmortal, y encargada de gobernar, conocer y guiar a las otras dos partes: la pasional (caballo blanco, dócil) y la apetitiva (caballo negro, rebelde).'
+        },
+        {
+            'pregunta': '¿Qué representa la caverna en la alegoría de Platón?',
+            'opciones': [
+                'El mundo de las Ideas.',
+                'La mente del filósofo.',
+                'El mundo sensible y el estado de ignorancia en el que viven los hombres.',
+                'Una metáfora del Estado ideal.'
+            ],
+            'respuestaCorrecta': 'El mundo sensible y el estado de ignorancia en el que viven los hombres.',
+            'justificacion': 'Correcto. La caverna simboliza el mundo sensible, el mundo de las apariencias y las sombras. Los prisioneros representan a la humanidad viviendo en la ignorancia (Doxa), confundiendo las copias (sombras en el muro) con la verdadera realidad.'
+        },
+        {
+            'pregunta': 'En la "Alegoría de la Línea", ¿qué representa el segmento más alto del conocimiento?',
+            'opciones': [
+                'La imaginación (Eikasia).',
+                'La creencia (Pistis).',
+                'El pensamiento discursivo (Dianoia), como las matemáticas.',
+                'La inteligencia pura o dialéctica (Noesis), el conocimiento directo de las Ideas.'
+            ],
+            'respuestaCorrecta': 'La inteligencia pura o dialéctica (Noesis), el conocimiento directo de las Ideas.',
+            'justificacion': 'Correcto. La Noesis es el grado más alto de conocimiento (Episteme), una captación puramente racional de las Ideas y sus relaciones, culminando en la Idea del Bien, sin depender de imágenes sensibles.'
         }
-
-        const rawQuestions = [
-            // --- René Descartes (10 Preguntas) ---
-            {
-                section: "René Descartes",
-                question: "¿Cuál de las siguientes afirmaciones describe mejor el punto de partida del método filosófico de Descartes? [cite: 5]",
-                options: [
-                    "Aceptar como verdadero todo aquello que ha aprendido de la tradición escolástica. [cite: 3]",
-                    "Confiar plenamente en la información proporcionada por los sentidos. [cite: 4]",
-                    "Dudar de todo conocimiento adquirido previamente para encontrar una certeza indudable. [cite: 5]",
-                    "Basar su conocimiento en la autoridad de los grandes filósofos de la antigüedad. [cite: 6]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Descartes inicia su filosofía con la duda metódica, un proceso por el cual decide dudar de todo lo que había adquirido hasta el momento, incluyendo los saberes de la escolástica y la información de los sentidos. [cite: 7] Su objetivo era encontrar una primera verdad que fuera absolutamente indudable, sobre la cual edificar nuevamente el conocimiento. [cite: 8]"
-            },
-            {
-                section: "René Descartes",
-                question: "Según Descartes, ¿cuál es la primera certeza a la que llega después de aplicar la duda metódica? [cite: 9]",
-                options: [
-                    "Que Dios existe y es garantía de la verdad. [cite: 10]",
-                    "Que el mundo material existe tal como lo percibimos.",
-                    "Que si duda, piensa, y si piensa, existe ('Pienso, luego existo'). [cite: 11]",
-                    "Que las matemáticas son el único conocimiento verdadero. [cite: 12]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "A través del proceso de la duda, Descartes llega a la conclusión de que, aunque pueda dudar de todo lo demás (los sentidos, el mundo, las ciencias), no puede dudar de que él mismo está dudando. [cite: 13] Y si duda, está pensando; y si está pensando, necesariamente debe existir como un ser pensante. [cite: 14] Esta es la famosa máxima 'Cogito, ergo sum' o 'Pienso, luego existo', que se convierte en la primera verdad evidente e indudable de su sistema. [cite: 14]"
-            },
-            {
-                section: "René Descartes",
-                question: "¿Qué son las 'ideas innatas' en la filosofía de Descartes? [cite: 15]",
-                options: [
-                    "Ideas que se adquieren a través de la experiencia sensible. [cite: 16]",
-                    "Ideas que se forjan a través de la imaginación. [cite: 17]",
-                    "Ideas que poseemos desde el nacimiento, como la idea de infinito o de Dios. [cite: 18]",
-                    "Ideas que provienen de la tradición filosófica y religiosa. [cite: 19]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Descartes distingue tres tipos de ideas: Innatas: Aquellas que el alma trae consigo desde el nacimiento, no derivadas de la experiencia ni construidas por la imaginación. [cite: 20] Considera que la idea de Dios, de infinito, o de la propia mente (pensamiento) son ejemplos de ideas innatas y son las más importantes para la razón. [cite: 21] Adventicias: Aquellas que provienen de la experiencia externa, a través de los sentidos. [cite: 22] Facticias (o ficticias): Aquellas que construimos o inventamos mediante la imaginación. [cite: 23]"
-            },
-            {
-                section: "René Descartes",
-                question: "En el dualismo cartesiano, ¿cuáles son las dos sustancias fundamentales que distingue Descartes? [cite: 24]",
-                options: [
-                    "Razón y Fe.",
-                    "Materia y Forma. [cite: 25]",
-                    "Sustancia pensante (res cogitans) y Sustancia extensa (res extensa).",
-                    "Apariencia y Realidad."
-                ],
-                correctAnswerIndex: 2, 
-                explanation: "El dualismo cartesiano postula la existencia de dos tipos de sustancias radicalmente diferentes: Sustancia pensante (res cogitans): Corresponde a la mente, alma o yo. Su atributo esencial es el pensamiento. Es inmaterial, no ocupa espacio. [cite: 27, 28] Sustancia extensa (res extensa): Corresponde al cuerpo y a todo el mundo material. Su atributo esencial es la extensión (ocupar espacio). [cite: 29, 30] Descartes consideraba que estas dos sustancias eran distintas e independientes, aunque interactuaban en el ser humano a través de la glándula pineal. [cite: 30]"
-            },
-            {
-                section: "René Descartes",
-                question: "¿Cuál es el propósito del 'argumento del genio maligno' en la filosofía de Descartes? [cite: 31]",
-                options: [
-                    "Probar la existencia de un ser demoníaco que controla el mundo. [cite: 32]",
-                    "Demostrar que Dios es bueno y no nos engaña. [cite: 33]",
-                    "Llevar la duda hasta el extremo, cuestionando incluso las verdades matemáticas. [cite: 34]",
-                    "Establecer que los sentidos son la fuente más fiable de conocimiento. [cite: 35]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "La hipótesis del genio maligno es un recurso metodológico que Descartes utiliza para radicalizar su duda. [cite: 36] Después de dudar de los sentidos (argumento del sueño), incluso las verdades que parecen más seguras, como las de las matemáticas (ej. 2+2=4), podrían ser puestas en duda. [cite: 37] Descartes plantea la posibilidad de que exista un ser sumamente poderoso y astuto (un genio maligno) que dedique todas sus energías a engañarnos, haciéndonos creer que son ciertas cosas que en realidad no lo son. [cite: 38] Esta duda hiperbólica es el paso previo para llegar a la certeza del 'pienso, luego existo', ya que incluso si un genio maligno me engaña, para ser engañado, debo existir como algo que piensa. [cite: 39]"
-            },
-            {
-                section: "René Descartes",
-                question: "¿Cuál es el modelo de conocimiento que Descartes admira y busca emular en la filosofía por su orden y certeza? [cite: 40]",
-                options: [
-                    "La retórica y la elocuencia. [cite: 41]",
-                    "La historia y la tradición.",
-                    "Las ciencias naturales basadas en la experimentación.",
-                    "Las matemáticas. [cite: 42]"
-                ],
-                correctAnswerIndex: 3,
-                explanation: "Descartes valoriza la razón como fuente de conocimiento y tiene como modelo a seguir a las matemáticas. [cite: 42, 43] Admira las matemáticas por su orden, la claridad de sus conceptos y la certeza de sus demostraciones. [cite: 43] Su objetivo es aplicar un método similar, riguroso y ordenado, al pensamiento filosófico para alcanzar verdades indudables. [cite: 44]"
-            },
-            {
-                section: "René Descartes",
-                question: "De las reglas del método cartesiano, ¿cuál de las siguientes se enfoca en descomponer los problemas complejos en sus partes más simples para su mejor comprensión? [cite: 45]",
-                options: [
-                    "La regla de la evidencia. [cite: 46]",
-                    "La regla del análisis.",
-                    "La regla de la síntesis. [cite: 46]", 
-                    "La regla de la enumeración. [cite: 47]"
-                ],
-                correctAnswerIndex: 1, 
-                explanation: "La segunda regla del método cartesiano es el análisis. [cite: 48] Esta regla recomienda dividir cada una de las dificultades que se examinan en tantas partes como sea posible y en cuantas requiera su mejor solución. [cite: 48] Se trata de descomponer lo complejo en sus elementos más simples y fundamentales para entenderlo con claridad."
-            },
-            {
-                section: "René Descartes",
-                question: "¿Qué papel juega Dios en la epistemología cartesiana una vez que se ha establecido la certeza del 'yo pensante'? [cite: 49]",
-                options: [
-                    "Dios es una idea facticia creada por la imaginación humana. [cite: 50]",
-                    "Dios es la sustancia extensa que constituye el mundo material. [cite: 51]",
-                    "Dios es la garantía de que las ideas claras y distintas que construye la razón coincidan con la realidad y no seamos engañados permanentemente. [cite: 52]",
-                    "Dios es irrelevante para el proceso de conocimiento, que depende únicamente de la razón autónoma. [cite: 53]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Una vez que Descartes establece su propia existencia como sustancia pensante, necesita un fundamento para la veracidad del conocimiento del mundo exterior y de otras verdades. [cite: 54] Argumenta que la idea de un ser perfecto (Dios) es una idea innata y que la existencia de este Dios bueno y veraz garantiza que no seamos engañados por un genio maligno cuando concebimos ideas de manera clara y distinta. [cite: 55] Así, Dios se convierte en la garantía de que los conocimientos que la sustancia pensante construye racionalmente puedan coincidir con la realidad. [cite: 56]"
-            },
-            {
-                section: "René Descartes",
-                question: "¿Cómo describe Descartes la relación entre la mente (sustancia pensante) y el cuerpo (sustancia extensa) en el ser humano? [cite: 57]",
-                options: [
-                    "Son una única sustancia con dos atributos diferentes. [cite: 58]",
-                    "Son dos sustancias distintas que interactúan íntimamente, especialmente a través de la glándula pineal. [cite: 58]",
-                    "La mente es una manifestación o producto del cuerpo material. [cite: 59]",
-                    "El cuerpo es una ilusión creada por la mente pensante. [cite: 60]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Descartes postula un dualismo sustancial, donde la mente (inmaterial, puro pensamiento) y el cuerpo (material, extenso) son dos sustancias fundamentalmente diferentes y separables. [cite: 61] Sin embargo, en el ser humano, estas dos sustancias están íntimamente unidas e interactúan. [cite: 62] Descartes sugirió que el punto principal de conexión o interacción entre ambas era la glándula pineal, situada en la base del cerebro. [cite: 63]"
-            },
-            {
-                section: "René Descartes",
-                question: "¿Cuál de las siguientes NO es una de las funciones principales de la razón según Descartes, mencionadas en el texto? [cite: 64]",
-                options: [
-                    "La intuición intelectual. [cite: 65]",
-                    "La deducción. [cite: 66]",
-                    "La percepción sensible.",
-                    "Ordenar las ideas y representaciones. [cite: 66]" 
-                ],
-                correctAnswerIndex: 2, 
-                explanation: "El texto destaca que las dos funciones más importantes de la razón para Descartes son la intuición intelectual (captación directa e inmediata de verdades evidentes) y la deducción (inferencia de unas verdades a partir de otras). [cite: 67, 68] Además, se menciona que Descartes apunta al ordenamiento de las ideas y del pensamiento, lo cual es una función racional. [cite: 68] La percepción sensible, aunque fuente de ideas adventicias, es precisamente de lo que Descartes duda inicialmente y no la considera una función primordial de la razón para alcanzar el conocimiento verdadero, sino más bien una fuente potencial de engaño. [cite: 69]"
-            },
-
-            // --- David Hume (10 Preguntas) ---
-            {
-                section: "David Hume",
-                question: "Según Hume, ¿cuál es la diferencia fundamental entre 'impresiones' e 'ideas'? [cite: 70]",
-                options: [
-                    "Las impresiones son innatas, mientras que las ideas se adquieren con la experiencia. [cite: 71]",
-                    "Las impresiones son complejas y las ideas son simples. [cite: 72]",
-                    "Las impresiones tienen mayor grado de fuerza y vivacidad que las ideas, siendo estas últimas imágenes débiles de las primeras. [cite: 73]",
-                    "Las impresiones provienen de la razón, y las ideas de los sentidos. [cite: 74]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume distingue las percepciones de la mente en dos géneros: impresiones e ideas. [cite: 75] La diferencia principal radica en sus grados de fuerza y vivacidad. [cite: 76] Las impresiones son nuestras sensaciones, pasiones y emociones en su primera aparición, más fuertes y violentas. [cite: 77] Las ideas son 'las imágenes débiles de éstas en el pensamiento y razonamiento'. [cite: 78] Por ejemplo, sentir dolor es una impresión; recordar ese dolor es una idea. [cite: 78, 79]"
-            },
-            {
-                section: "David Hume",
-                question: "¿Cuál es el principio fundamental que Hume establece sobre el origen de nuestras ideas simples? [cite: 80]",
-                options: [
-                    "Todas nuestras ideas simples son innatas y previas a cualquier experiencia. [cite: 81]",
-                    "Todas nuestras ideas simples se derivan de la pura razón, independientemente de los sentidos. [cite: 82]",
-                    "Todas nuestras ideas simples en su primera apariencia se derivan de impresiones simples que son correspondientes a ellas y que ellas representan exactamente. [cite: 83]",
-                    "Todas nuestras ideas simples son construcciones arbitrarias de la imaginación. [cite: 84]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume establece como un 'primer principio' en la ciencia de la naturaleza humana que 'todas nuestras ideas simples en su primera apariencia se derivan de impresiones simples que son correspondientes a ellas y que ellas representan exactamente'. [cite: 85] Esto significa que no podemos tener una idea simple de algo sin haber tenido primero una impresión sensible de ello. [cite: 86] Las impresiones simples siempre preceden a sus ideas correspondientes. [cite: 87]"
-            },
-            {
-                section: "David Hume",
-                question: "De acuerdo con Hume, ¿cuáles son los tres principios de asociación de ideas mediante los cuales la imaginación une las ideas simples? [cite: 87]",
-                options: [
-                    "Evidencia, análisis y síntesis. [cite: 88]",
-                    "Sustancia, accidente y modo. [cite: 88]",
-                    "Razón, emoción e instinto. [cite: 88]",
-                    "Semejanza, contigüidad en tiempo y espacio, y causa y efecto. [cite: 89]"
-                ],
-                correctAnswerIndex: 3,
-                explanation: "Hume identifica tres cualidades o principios por los cuales las ideas simples se asocian en la imaginación para formar ideas complejas o para que una idea despierte naturalmente a otra. [cite: 90, 91] Estos son: Semejanza: La mente tiende a pasar de una idea a otra que se le parece. [cite: 91] Contigüidad en tiempo y espacio: Si los objetos están próximos en tiempo o lugar, sus ideas tienden a asociarse. [cite: 92] Causa y efecto (Causalidad): Esta es la relación que produce la conexión más fuerte en la fantasía. [cite: 93]"
-            },
-            {
-                section: "David Hume",
-                question: "¿Cómo explica Hume nuestra idea de 'conexión necesaria' entre causa y efecto? [cite: 94]",
-                options: [
-                    "Es una cualidad inherente a los objetos que podemos percibir directamente a través de los sentidos. [cite: 95]",
-                    "Es una verdad que conocemos a priori mediante la razón, sin necesidad de experiencia. [cite: 96]",
-                    "Es una impresión interna que surge del hábito o la costumbre, después de observar repetidamente la conjunción constante de dos objetos. [cite: 97]",
-                    "Es una ficción creada por los metafísicos para explicar el orden del universo. [cite: 98]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume argumenta que no podemos observar directamente una 'conexión necesaria' entre una causa y su efecto en los objetos mismos. [cite: 99] Tampoco podemos inferirla a priori por la razón. [cite: 100] En lugar de ello, la idea de conexión necesaria surge de una impresión de reflexión interna. [cite: 100] Después de observar repetidamente que dos tipos de objetos (o eventos) han estado constantemente unidos (conjunción constante) y que uno precede al otro (prioridad), el espíritu adquiere un hábito. [cite: 101] Cuando aparece una impresión de uno de los objetos, el espíritu se siente determinado a pasar a la idea del otro. [cite: 102] Esta 'determinación del pensamiento' es la impresión de la cual se deriva nuestra idea de conexión necesaria. [cite: 103]"
-            },
-            {
-                section: "David Hume",
-                question: "¿Cuál es la postura de Hume respecto al 'yo' o la 'identidad personal'? [cite: 104]",
-                options: [
-                    "El yo es una sustancia pensante simple e idéntica que permanece a lo largo del tiempo. [cite: 105]",
-                    "El yo es una entidad inmaterial que conocemos por intuición directa. [cite: 106]",
-                    "No tenemos una impresión constante e invariable del 'yo', sino que este es 'un enlace o colección de diferentes percepciones que se suceden las unas a las otras con una rapidez inconcebible'. [cite: 107]",
-                    "El yo es una idea innata, garantizada por la existencia de Dios. [cite: 108]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume niega la existencia de un 'yo' como una sustancia simple y continua. [cite: 109] Argumenta que cuando introspeccionamos, no encontramos ninguna impresión simple y constante de un 'yo'. [cite: 110] Lo que encontramos es un flujo constante de percepciones particulares (sensaciones, emociones, pensamientos) que se suceden rápidamente. [cite: 111] Por lo tanto, el 'yo' no es una entidad subsistente, sino más bien 'un enlace o colección de diferentes percepciones'. [cite: 112] La identidad que le atribuimos surge de la relación de semejanza y causalidad entre estas percepciones, facilitada por la memoria. [cite: 113]"
-            },
-            {
-                section: "David Hume",
-                question: "Según Hume, la memoria y la imaginación se distinguen principalmente por: [cite: 114]",
-                options: [
-                    "La memoria conserva el orden original de las impresiones, mientras que la imaginación siempre las altera. [cite: 114]",
-                    "La imaginación solo trabaja con ideas simples, mientras que la memoria puede manejar ideas complejas. [cite: 115]",
-                    "Las ideas de la memoria son mucho más vivaces y consistentes que las de la imaginación. [cite: 116]",
-                    "La memoria es una facultad racional, mientras que la imaginación es puramente sensible. [cite: 117]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume señala que tanto la memoria como la imaginación reproducen impresiones como ideas, pero se diferencian en el grado de vivacidad. [cite: 118] 'Es evidente, a primera vista, que las ideas de la memoria son mucho más vivaces y consistentes que las de la imaginación'. [cite: 119] Mientras que la memoria conserva un grado considerable de la vivacidad original de la impresión, la imaginación presenta la percepción de forma más débil y lánguida. [cite: 120] Aunque también menciona que la memoria tiende a conservar el orden original y la imaginación tiene libertad para alterarlo, la diferencia fundamental en la cualidad afectiva de las ideas es la vivacidad y fuerza. [cite: 121]"
-            },
-            {
-                section: "David Hume",
-                question: "En el 'Tratado de la Naturaleza Humana', Hume afirma que 'la necesidad [...] es algo que existe en el espíritu, no en los objetos'. ¿A qué se refiere con esto? [cite: 123]",
-                options: [
-                    "A que la secuencia de eventos en el mundo es completamente caótica y no sigue ningún patrón.",
-                    "A que la conexión necesaria entre una causa y su efecto es una proyección de nuestra mente, basada en la costumbre, y no una cualidad inherente a los objetos mismos. [cite: 123]",
-                    "A que solo los eventos mentales, y no los físicos, pueden tener conexiones necesarias.",
-                    "A que la necesidad es un concepto metafísico que debemos abandonar por completo. [cite: 124]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Hume sostiene que no percibimos ninguna conexión necesaria real entre los objetos externos que llamamos causas y efectos. Lo que observamos es su conjunción constante (un evento sigue a otro repetidamente) y su contigüidad y sucesión. Es la observación repetida de esta conjunción lo que crea un hábito en nuestra mente, una 'determinación del pensamiento a pasar de un objeto a la idea de su acompañante usual'. [cite: 124] Esta determinación interna, sentida por el espíritu, es lo que proyectamos sobre los objetos y llamamos 'conexión necesaria'. [cite: 125] Por lo tanto, la necesidad 'es algo que existe en el espíritu, no en los objetos'. [cite: 126]"
-            },
-            {
-                section: "David Hume",
-                question: "¿Cuál de las siguientes afirmaciones describe la visión de Hume sobre las 'sustancias' (materiales o espirituales)? [cite: 127]",
-                options: [
-                    "La sustancia es la base fundamental de la realidad, cognoscible a través de la razón. [cite: 128]",
-                    "Tenemos una idea clara e innata de la sustancia, tanto material como espiritual. [cite: 129]",
-                    "No tenemos una idea de la substancia distinta de una colección de cualidades particulares unidas por la imaginación. [cite: 130]",
-                    "La existencia de una sustancia única (Dios) es la única certeza metafísica posible. [cite: 131]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume cuestiona la noción tradicional de sustancia. Argumenta que no tenemos ninguna impresión (y por lo tanto ninguna idea) de una sustancia subyacente que exista independientemente de sus cualidades perceptibles. [cite: 132] Lo que llamamos 'sustancia' es simplemente 'una colección de ideas simples que están unidas por la imaginación y poseen un nombre particular asignado a ellas'. [cite: 133] Ya sea la substancia material o la substancia espiritual (el alma), no podemos concebirla más que como un conjunto de percepciones particulares. [cite: 134]"
-            },
-            {
-                section: "David Hume",
-                question: "Hume considera que el principio según el cual 'casos de los que no tenemos experiencia deben asemejarse a aquellos de que tenemos experiencia' (principio de la uniformidad de la naturaleza) se fundamenta en: [cite: 135]",
-                options: [
-                    "Una demostración lógica irrefutable. [cite: 135]",
-                    "Una probabilidad matemática calculable. [cite: 136]",
-                    "El hábito o la costumbre, y no en un razonamiento. [cite: 136]",
-                    "Una revelación divina o una idea innata. [cite: 137]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Hume argumenta que no podemos demostrar lógicamente que el futuro se parecerá al pasado, ya que podemos concebir un cambio en el curso de la naturaleza sin contradicción. [cite: 137] Tampoco podemos probarlo mediante la probabilidad, ya que todo razonamiento probable ya presupone que el futuro será conforme al pasado. [cite: 138] Por lo tanto, nuestra expectativa de que el futuro se asemejará al pasado (principio de uniformidad) no se basa en la razón, sino en el hábito o la costumbre. [cite: 139] Es la experiencia pasada de conjunciones constantes la que nos lleva a esperar las mismas conjunciones en el futuro. [cite: 140]"
-            },
-            {
-                section: "David Hume",
-                question: "¿Qué papel juega la 'simpatía' en la filosofía moral de Hume, según el texto proporcionado del 'Tratado de la Naturaleza Humana'? [cite: 141]",
-                options: [
-                    "Es una debilidad humana que debe ser superada por la razón para alcanzar la virtud. [cite: 142]",
-                    "Es un principio poderoso que nos permite recibir por comunicación las inclinaciones y sentimientos de otros, siendo fundamental para el sentido de la moralidad. [cite: 143]",
-                    "Es una forma de egoísmo, ya que solo simpatizamos con aquellos de quienes esperamos un beneficio. [cite: 144]",
-                    "Es irrelevante para la moral, que se basa únicamente en leyes divinas o racionales. [cite: 145]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Hume describe la simpatía como una cualidad notable de la naturaleza humana, una inclinación a 'recibir por comunicación sus inclinaciones y sentimientos aunque sean diferentes o contrarios a los nuestros'. [cite: 146, 147] Explica que la idea de los sentimientos de otros puede convertirse en una impresión real en nosotros, produciendo una emoción similar. [cite: 147] Este principio es crucial para su teoría moral, ya que gran parte de nuestra aprobación de las virtudes (especialmente las artificiales como la justicia y las naturales con tendencia al bien de la sociedad) surge de nuestra simpatía con el placer o utilidad que estas virtudes producen en otros o en la sociedad en general. [cite: 148]"
-            },
-
-            // --- Immanuel Kant (10 Preguntas) ---
-            {
-                section: "Immanuel Kant",
-                question: "¿Cuál fue la principal intención de Kant al desarrollar su 'filosofía crítica', especialmente en la Crítica de la razón pura? [cite: 149]",
-                options: [
-                    "Refutar completamente el empirismo de Hume y restaurar el dogmatismo racionalista. [cite: 150]",
-                    "Demostrar la existencia de Dios a través de argumentos puramente lógicos. [cite: 151]",
-                    "Investigar los límites y las condiciones de posibilidad del conocimiento humano, buscando una síntesis entre el racionalismo y el empirismo. [cite: 152]",
-                    "Establecer un sistema moral basado únicamente en los sentimientos y las emociones. [cite: 153]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kant buscaba superar la dicotomía entre el racionalismo dogmático (que creía que la razón por sí sola podía conocer la realidad) y el empirismo escéptico (que, como en Hume, limitaba el conocimiento a la experiencia y ponía en duda la causalidad y la sustancia). [cite: 154] Su 'filosofía crítica' o 'método trascendental' no se centra tanto en los objetos del conocimiento, sino en 'nuestra manera de conocer los objetos, en la medida en que ella ha de ser posible a priori'. [cite: 155] Pretendía establecer los límites de la razón pura y fundamentar la posibilidad de un conocimiento científico que fuera universal y necesario, pero que también comenzara con la experiencia. [cite: 156, 157]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "¿Qué entiende Kant por el 'giro copernicano' en la filosofía? [cite: 158]",
-                options: [
-                    "Que la Tierra gira alrededor del Sol, y no al revés. [cite: 159]",
-                    "Que, en lugar de suponer que nuestro conocimiento se rige por los objetos, debemos suponer que los objetos se rigen por nuestras facultades de conocimiento. [cite: 160]",
-                    "Que la moralidad debe basarse en la utilidad y no en deberes universales. [cite: 161]",
-                    "Que la metafísica es imposible como ciencia y debe ser reemplazada por la psicología. [cite: 162]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Kant compara su revolución en la filosofía con la de Copérnico en la astronomía. [cite: 163] Así como Copérnico supuso que el espectador giraba y no las estrellas, Kant propone que, en lugar de que nuestra intuición se rija por la naturaleza de los objetos, son los objetos (como objetos de los sentidos) los que se rigen por la naturaleza de nuestra facultad de intuición. [cite: 164] Esto significa que el sujeto que conoce no es un mero receptor pasivo, sino que impone ciertas estructuras (formas a priori) a la experiencia para que el conocimiento sea posible. [cite: 165]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "Según Kant, ¿qué son el espacio y el tiempo? [cite: 166]",
-                options: [
-                    "Conceptos empíricos derivados de la observación de objetos externos. [cite: 166]",
-                    "Propiedades inherentes a las 'cosas en sí mismas' (noúmenos). [cite: 167]",
-                    "Formas a priori de la sensibilidad, puestas por el sujeto, que organizan nuestras sensaciones. [cite: 168]",
-                    "Ideas innatas en el sentido cartesiano, implantadas por Dios. [cite: 169]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kant argumenta que el espacio y el tiempo no son propiedades de las cosas en sí mismas ni conceptos derivados de la experiencia. [cite: 170] Son formas a priori de la sensibilidad. [cite: 171, 172] Esto significa que son condiciones inherentes a nuestra facultad de percibir; el sujeto 'pone' el espacio y el tiempo para organizar el material caótico de las sensaciones y así constituir los fenómenos. [cite: 173] El espacio es la forma del sentido externo, y el tiempo es la forma del sentido interno y, mediatamente, de todos los fenómenos. [cite: 174]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "¿Qué caracteriza a los 'juicios sintéticos a priori' en la filosofía de Kant? [cite: 175]",
-                options: [
-                    "Son juicios donde el predicado ya está contenido en el sujeto (analíticos) y se basan en la experiencia (a posteriori). [cite: 176]",
-                    "Son juicios que no amplían nuestro conocimiento (analíticos) y son independientes de la experiencia (a priori). [cite: 177]",
-                    "Son juicios que amplían nuestro conocimiento (sintéticos) y se basan en la experiencia (a posteriori). [cite: 178]",
-                    "Son juicios que amplían nuestro conocimiento (sintéticos) y son universales y necesarios, independientes de la experiencia (a priori). [cite: 179]"
-                ],
-                correctAnswerIndex: 3,
-                explanation: "Kant buscaba fundamentar la posibilidad de la ciencia (como la física de Newton y las matemáticas). [cite: 180] Consideraba que los juicios científicos debían ser: Sintéticos: Porque amplían nuestro conocimiento (el predicado añade algo nuevo al sujeto). [cite: 181] A priori: Porque son universales y necesarios, es decir, independientes de la experiencia particular. [cite: 182] Ejemplos de estos juicios se encuentran en las matemáticas (ej. '7+5=12') y en los principios fundamentales de la física (ej. 'Todo cambio tiene una causa'). [cite: 183]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "¿Qué es el 'noúmeno' o la 'cosa en sí' para Kant?",
-                options: [
-                    "La realidad tal como la percibimos a través de nuestras formas a priori de sensibilidad y entendimiento.",
-                    "El conjunto de todas las posibles experiencias humanas.",
-                    "La realidad tal como es independientemente de nuestras facultades de conocer, la cual permanece incognoscible para nosotros. [cite: 185]",
-                    "Un concepto metafísico sin ningún tipo de referente o significado. [cite: 184]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kant distingue entre el fenómeno (la cosa tal como la conocemos, organizada por nuestras estructuras a priori) y el noúmeno (la cosa en sí misma, Ding an sich). [cite: 185] Sostiene que solo podemos conocer los fenómenos, es decir, la realidad tal como se nos aparece y es estructurada por nuestras facultades. [cite: 186] El noúmeno, la realidad tal como es en sí misma, independientemente de nuestra forma de conocerla, permanece incognoscible para la razón teórica humana. [cite: 187] Si bien podemos pensar el noúmeno, no podemos tener un conocimiento de él. [cite: 188]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "¿Qué papel asigna Kant a la imaginación en el proceso de conocimiento? [cite: 189]",
-                options: [
-                    "Es la fuente de las ideas innatas y de los principios morales. [cite: 190]",
-                    "Es una facultad meramente reproductora de ideas facticias, sin relevancia para el conocimiento científico. [cite: 191]",
-                    "Es la capacidad de organizar representaciones mentales (imágenes, percepciones) en unidades significativas que podemos entender, generando estructura conectora. [cite: 192]",
-                    "Es la facultad que nos permite acceder directamente al noúmeno o cosa en sí. [cite: 193]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Según el texto 'Kant para Psicología.pdf', Kant consideró que la imaginación es la capacidad de organizar representaciones mentales (sobre todo imágenes y percepciones) en unidades significativas que podemos entender. [cite: 194] La imaginación genera buena parte de la estructura conectora mediante la cual tenemos experiencia, conocimiento y lenguaje coherentes y significativos. [cite: 195] No es meramente pasiva, sino que juega un rol activo en la estructuración de la experiencia. [cite: 196]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "En la Crítica de la razón pura, Kant somete la razón a una especie de 'juicio'. ¿Cuál es el propósito principal de este juicio? [cite: 197, 198]",
-                options: [
-                    "Glorificar la capacidad ilimitada de la razón para conocer cualquier objeto. [cite: 199]",
-                    "Demostrar que la razón es completamente inútil y debe ser reemplazada por la fe. [cite: 199]",
-                    "Analizar si la razón puede conocer todo conocimiento que se proponga o si tiene limitaciones, especialmente en relación con lo empírico y la metafísica. [cite: 200]",
-                    "Probar que la razón es simplemente un producto de la experiencia acumulada. [cite: 201]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "El texto de tu resumen inicial indica que en la 'Crítica a la razón pura' Kant 'somete a la razón a una especie de juicio donde se analiza si la razón puede conocer todo conocimiento que se proponga o tiene limitaciones, estas limitaciones pueden estar dadas por el vínculo que tiene la razón con lo empírico'. [cite: 202] Concluye que la metafísica, al abordar temas como el alma o Dios, se enfrenta a límites y estos no pueden ser objetos de conocimiento científico, sino de especulación. [cite: 203] El propósito es, entonces, discernir los límites y capacidades de la razón pura. [cite: 204]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "Kant afirma que 'todo conocimiento comienza con la experiencia, pero no todo procede de ella'. ¿Qué significa la segunda parte de esta afirmación ('no todo procede de ella')? [cite: 205, 206]",
-                options: [
-                    "Que una parte del conocimiento es revelada por una autoridad divina. [cite: 207]",
-                    "Que el conocimiento más importante se basa en la especulación metafísica pura. [cite: 208]",
-                    "Que hay algo puesto por el sujeto que conoce (formas a priori) que estructura la experiencia para hacer posible el conocimiento. [cite: 209]",
-                    "Que la imaginación puede crear conocimiento sin ningún input sensorial. [cite: 210]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Esta frase es central en la epistemología kantiana. Que 'no todo [conocimiento] procede de ella [la experiencia]' significa que el sujeto cognoscente aporta estructuras propias, anteriores e independientes de la experiencia particular (las formas a priori de la sensibilidad como el espacio y el tiempo, y las categorías del entendimiento), que son necesarias para organizar y dar sentido a los datos crudos de la experiencia, posibilitando así el conocimiento objetivo. [cite: 211, 212]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "¿Cuál es la posición de Kant respecto a la metafísica como ciencia, según el resumen inicial y las diapositivas? [cite: 213]",
-                options: [
-                    "La metafísica es la ciencia fundamental que provee los cimientos para todas las demás ciencias. [cite: 214]",
-                    "La metafísica puede alcanzar el mismo grado de certeza que las matemáticas mediante el uso correcto de la razón. [cite: 215]",
-                    "La metafísica tradicional, al intentar conocer objetos que trascienden la experiencia posible (como el alma o Dios), no puede constituirse como una ciencia. [cite: 216]",
-                    "La metafísica es una ciencia empírica que debe basarse en la observación de fenómenos trascendentes. [cite: 217]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kant concluye que la metafísica, en su intento de abordar temas como el alma, la inmortalidad o Dios (objetos que están más allá de la experiencia sensible posible), va a tener límites. [cite: 218] Estos temas pueden ser postulados por la razón o ser objeto de especulación, pero no pueden ser objetos de conocimiento científico en el mismo sentido que los objetos de las ciencias naturales o las matemáticas. [cite: 219] Por lo tanto, la metafísica tradicional no puede alcanzar el estatus de ciencia. [cite: 220]"
-            },
-            {
-                section: "Immanuel Kant",
-                question: "¿Qué son las categorías (o formas a priori del entendimiento) para Kant? [cite: 221]",
-                options: [
-                    "Tipos de objetos que existen en el mundo nouménico. [cite: 222]",
-                    "Conceptos puros del entendimiento, puestos por el sujeto, que organizan y unifican los fenómenos dados por la sensibilidad para producir juicios y conocimiento. [cite: 223]",
-                    "Ideas generales que se abstraen de la experiencia repetida. [cite: 224]",
-                    "Principios morales fundamentales que guían la acción humana. [cite: 224]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Una vez que las sensaciones han sido organizadas por el espacio y el tiempo (formas a priori de la sensibilidad) constituyendo fenómenos, estos fenómenos se convierten en la 'materia prima' sobre la cual operan las categorías del entendimiento. [cite: 225] Las categorías (como causalidad, sustancia, unidad, etc.) son conceptos puros, no derivados de la experiencia, que el entendimiento impone a los fenómenos para sintetizarlos, ordenarlos y elaborar juicios, permitiendo así el conocimiento objetivo. [cite: 226] Sin los fenómenos dados por la sensibilidad, las categorías serían 'vacías'; sin las categorías, los fenómenos serían 'ciegos' (ininteligibles). [cite: 227]"
-            },
-            
-            // --- Neopositivismo (20 Preguntas) ---
-            {
-                section: "Neopositivismo",
-                question: "El término 'positivismo lógico' se acuñó originalmente para caracterizar el punto de vista de un grupo de filósofos, científicos y matemáticos conocido como: [cite: 228]",
-                options: [
-                    "La Escuela de Frankfurt.",
-                    "El Círculo de Viena. [cite: 229]",
-                    "Los Empiristas Británicos. [cite: 229]",
-                    "La Academia Platónica."
-                ],
-                correctAnswerIndex: 1,
-                explanation: "El texto 'Introducción del Compilador' de A.J. Ayer afirma claramente que 'Hace unos treinta años se acuñó el término \\'positivismo lógico\\' para caracterizar el punto de vista de un grupo de filósofos, hombres de ciencia y matemáticos que se denominaron a sí mismos, el Círculo de Viena'. [cite: 230, 231]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Alrededor de qué figura principal y en qué ciudad surgió principalmente el Círculo de Viena a principios de la década de 1920? [cite: 232]",
-                options: [
-                    "Ludwig Wittgenstein en Cambridge. [cite: 233]",
-                    "Bertrand Russell en Londres. [cite: 233]",
-                    "Moritz Schlick en Viena. [cite: 233]",
-                    "Karl Popper en Berlín. [cite: 233]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Según Ayer, 'El Círculo de Viena surgió a principios de la década de 1920 a 1930, cuando Moritz Schlick, en torno del cual se agrupó, lleno de Kiel para ocupar la cátedra de filosofía en la Universidad de Viena'. [cite: 234] Las diapositivas también confirman que Moritz Schlick fue la figura central alrededor de la cual se agrupó el Círculo en Viena. [cite: 235]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cuál de los siguientes NO fue un miembro filosófico principal del Círculo de Viena según los textos? [cite: 236]",
-                options: [
-                    "Rudolf Carnap. [cite: 237]",
-                    "Otto Neurath. [cite: 237]",
-                    "Ludwig Wittgenstein. [cite: 237]",
-                    "Herbert Feigl. [cite: 237]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Si bien Ludwig Wittgenstein ejerció una 'enorme influencia' sobre el movimiento positivista con su Tractatus Logico-Philosophicus y mantuvo estrechas relaciones personales con miembros como Schlick y Waismann, Ayer especifica que 'Wittgenstein no se adhirió oficialmente al Círculo'. [cite: 238] Los otros mencionados (Carnap, Neurath, Feigl) sí son listados como miembros filosóficos principales. [cite: 239]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "El manifiesto de 1929 del Círculo de Viena, titulado 'Wissenschaftliche Weltauffassung. Der Wiener Kreis', fue escrito por: [cite: 240]",
-                options: [
-                    "Moritz Schlick, Ludwig Wittgenstein y Hans Hahn. [cite: 240]",
-                    "Rudolf Carnap, Otto Neurath y Hans Hahn. [cite: 241]",
-                    "Karl Popper, Herbert Feigl y Philipp Frank. [cite: 241]",
-                    "Ernst Mach, Ludwig Boltzmann y Franz Brentano. [cite: 242]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "A.J. Ayer menciona que el manifiesto de 1929, 'Wissenschaftliche Weltauffassung. Der Wiener Kreis', fue 'escrito por Carnap. Neurath y Hahn'. [cite: 243]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cuáles son los dos rasgos fundamentales que caracterizan la 'concepción científica del mundo' del Círculo de Viena? [cite: 244]",
-                options: [
-                    "Racionalismo y especulación metafísica. [cite: 245]",
-                    "Escepticismo y misticismo. [cite: 246]",
-                    "Empirismo/positivismo y la aplicación del análisis lógico. [cite: 246]",
-                    "Idealismo y fenomenología."
-                ],
-                correctAnswerIndex: 2,
-                explanation: "En el texto 'La concepción científica del mundo: el Círculo de Viena' (CCM), se afirma: 'Hemos caracterizado la concepción científica del mundo en lo fundamental mediante dos rasgos. Primero, es empirista y positivista: hay sólo conocimiento de la experiencia que se basa en lo dado inmediatamente. Segundo, la concepción científica del mundo se distingue por la aplicación de un método determinado, a saber, el del análisis lógico'. [cite: 247]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "Según el Positivismo Lógico, las proposiciones significativas se dividen en dos clases principales: [cite: 248]",
-                options: [
-                    "Proposiciones éticas y proposiciones estéticas. [cite: 248]",
-                    "Proposiciones históricas y proposiciones psicológicas. [cite: 249]",
-                    "Proposiciones formales (tautológicas) y proposiciones fácticas (verificables empíricamente). [cite: 249]",
-                    "Proposiciones metafísicas y proposiciones teológicas. [cite: 250]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "A.J. Ayer explica que los positivistas lógicos 'dividían las proposiciones significativas en dos clases: las proposiciones formales como las de la lógica o las matemáticas puras, que decían eran tautológicas (...) y las proposiciones fácticas, que se requería fueran verificables empíricamente'. [cite: 250]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cuál es el famoso lema que resume la visión neopositivista sobre el significado de una proposición fáctica? [cite: 251]",
-                options: [
-                    "'Ser es ser el valor de una variable.' [cite: 252]",
-                    "'La esencia precede a la existencia.' [cite: 252]",
-                    "'El significado de una proposición consiste en su método de verificación.' [cite: 253]",
-                    "'Todo lo que puede ser dicho, puede decirse con claridad.' [cite: 254]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "A.J. Ayer señala que la opinión de que el contenido fáctico de los enunciados se debía a los enunciados elementales (relaciones de observaciones) 'se resumió en el célebre lema de que el significado de una proposición consiste en su método de verificación'. [cite: 255] Las diapositivas también citan este lema. [cite: 256]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cuál era la postura del Círculo de Viena respecto a los enunciados de la metafísica? [cite: 256]",
-                options: [
-                    "Consideraban que eran la base de todo conocimiento científico. [cite: 257]",
-                    "Los veían como expresiones poéticas con un profundo significado literal. [cite: 258]",
-                    "Los desenmascaraban como pseudo-problemas, carentes de significado cognoscitivo. [cite: 258]",
-                    "Intentaban verificarlos empíricamente para integrarlos a la ciencia. [cite: 259]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "El Círculo de Viena era crítico con la metafísica. [cite: 259] Sostenían que muchos de sus enunciados no eran ni verdaderos ni falsos, sino literalmente carentes de sentido porque no podían ser verificados empíricamente ni eran tautologías lógicas. [cite: 260] 'La clarificación de los problemas filosóficos tradicionales nos conduce, en parte, a desenmascararlos como pseudo-problemas'. [cite: 261] Ayer también menciona que se condenó a los enunciados metafísicos 'por pretender ser cognoscitivos, por disfrazarse de algo que no era'. [cite: 262]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "El Círculo de Viena identificó como un 'error básico de la metafísica': [cite: 263]",
-                options: [
-                    "Su excesiva dependencia de la observación empírica. [cite: 263]",
-                    "La concepción de que el pensar puede llevarnos a conocimientos por sí mismo sin utilización de algún material de la experiencia. [cite: 264]",
-                    "Su uso riguroso del análisis lógico del lenguaje. [cite: 265]",
-                    "Su rechazo a las verdades universales y necesarias. [cite: 266]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "El manifiesto del Círculo de Viena (CCM) establece: 'El segundo error básico de la metafísica consiste en la concepción de que el pensar puede llevarnos a conocimientos por sí mismo sin utilización de algún material de la experiencia'. [cite: 266] Afirmaban que 'No es por lo tanto posible desarrollar una metafísica a partir del pensar puro'. [cite: 267, 268]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "La tesis del 'fisicalismo', asociada con el Círculo de Viena, proponía que los enunciados sobre experiencias o procesos mentales debían ser equivalentes a: [cite: 269]",
-                options: [
-                    "Enunciados matemáticos puros. [cite: 269]",
-                    "Enunciados sobre entidades espirituales. [cite: 269]",
-                    "Enunciados físicos, para ser públicamente inteligibles. [cite: 269]",
-                    "Enunciados poéticos con valor expresivo. [cite: 269]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "A.J. Ayer explica el fisicalismo indicando que 'los enunciados que ostensiblemente se refieren a experiencias, a estados o a procesos \\'mentales\\' de cualquier clase (...) deben equivaler todos a \\'enunciados físicos\\', ya que sólo de esta manera se pueden inteligir públicamente'. [cite: 270]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cuál era el objetivo final del trabajo científico según el Círculo de Viena, a través de la aplicación del análisis lógico al material empírico? [cite: 271]",
-                options: [
-                    "La creación de múltiples ciencias especializadas e inconexas. [cite: 272]",
-                    "El desarrollo de una metafísica científica. [cite: 272]",
-                    "Alcanzar el objetivo de la ciencia unificada. [cite: 273]",
-                    "La subordinación de la ciencia a los principios teológicos. [cite: 273]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "El manifiesto del Círculo de Viena (CCM) dice: 'La aspiración del trabajo científico radica en alcanzar el objetivo de la ciencia unificada por medio de la aplicación de ese análisis lógico al material empírico'. [cite: 275]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cómo consideraban los positivistas lógicos los enunciados formales de la lógica o las matemáticas puras? [cite: 276]",
-                options: [
-                    "Como proposiciones fácticas verificables empíricamente. [cite: 277]",
-                    "Como enunciados metafísicos sin sentido. [cite: 277]",
-                    "Como tautologías. [cite: 277]",
-                    "Como las verdades más profundas sobre la realidad del mundo. [cite: 278]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Ayer señala que los positivistas lógicos consideraban las proposiciones formales, como las de la lógica o las matemáticas puras, como 'tautológicas'. [cite: 279] Esto significa que son verdaderas en virtud de su forma lógica, pero no dicen nada acerca del mundo o de los hechos. [cite: 280]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "Inicialmente, los enunciados elementales o 'protocolares' (base de la verificación) se consideraban a menudo como: [cite: 281]",
-                options: [
-                    "Principios metafísicos universales. [cite: 281]",
-                    "Relaciones de observaciones directas, referidas a experiencias sensoriales. [cite: 282]",
-                    "Conclusiones de largos razonamientos deductivos. [cite: 282]",
-                    "Verdades reveladas por la intuición. [cite: 283]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Ayer explica que, al principio, 'sus discípulos tomaron por cosa sabida que los enunciados elementales que admitían este criterio de significación eran relaciones de observaciones'. [cite: 283] Estos se referían a experiencias introspectibles o sensoriales del sujeto, o a acontecimientos físicos públicos. [cite: 284]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "El Círculo de Viena afirmaba que el mal uso del lenguaje había llevado a: [cite: 285]",
-                options: [
-                    "Un excesivo rigor en el método científico. [cite: 285]",
-                    "La unificación prematura de las ciencias. [cite: 286]",
-                    "Las hipótesis metafísicas sin fundamentos científicos. [cite: 286]",
-                    "El abandono de la lógica en la filosofía. [cite: 287]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Los miembros del Círculo de Viena sostenían que uno de los errores básicos de la metafísica era una vinculación demasiado estrecha con la forma de los lenguajes tradicionales, lo que llevaba a 'una concepción \\'cosista\\' de los conceptos funcionales' y, en general, a simulacros de contenido teórico donde no lo había. [cite: 287] En tu resumen inicial también se menciona: 'Ellos afirman que el mal uso del lenguaje llevó a las hipótesis metafísicas sin fundamentos científicos'. [cite: 288]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Qué disciplina consideraban los neopositivistas como el modelo de ciencia al que las demás debían aspirar, caracterizada por el uso de experimentos y matemáticas? [cite: 289]",
-                options: [
-                    "La historia. [cite: 290]",
-                    "La psicología. [cite: 290]",
-                    "La física. [cite: 290]",
-                    "La sociología. [cite: 290]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "En tu resumen inicial, se indica que 'La idea del positivismo es que todo conocimiento que quiera tener la legitimidad de ser un conocimiento científico debe parecerse a la física. El modelo de ciencia es la física. Tiene que tener dos elementos: Experimentos y Matemáticas. El Neopositivismo hereda este modelo de ciencia, la Física.' [cite: 291]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "Una de las críticas que Ayer menciona al 'principio de verificación' es que: [cite: 292]",
-                options: [
-                    "Es demasiado fácil de aplicar a los enunciados metafísicos. [cite: 293]",
-                    "No es verificable por sí mismo según sus propios criterios. [cite: 294]",
-                    "Solo es aplicable a las matemáticas y la lógica. [cite: 295]",
-                    "Contradice los principios del empirismo. [cite: 295]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "A.J. Ayer señala: 'Una obvia objeción al principio de verificación y de la que rápidamente se apoderaron los adversarios de los positivistas, radica en que no es verificable2 por si mismo'. [cite: 296] Si se tomara como una hipótesis empírica, parecería falso, y tampoco fue formulado como resultado de una investigación empírica. [cite: 297]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "Según los textos, ¿qué actitud tenía el Círculo de Viena hacia las ciencias sociales en relación con las ciencias naturales? [cite: 298]",
-                options: [
-                    "Consideraban que las ciencias sociales eran fundamentalmente diferentes y requerían un método completamente distinto. [cite: 299]",
-                    "Desechaban la opinión de que existiera una diferencia radical entre ellas; en última instancia, las ciencias sociales también tratan de acontecimientos físicos. [cite: 300, 301]",
-                    "Creían que las ciencias sociales eran superiores por su capacidad de comprensión subjetiva. [cite: 302]",
-                    "Sostenían que las ciencias sociales eran meras especulaciones sin base empírica. [cite: 303]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Ayer menciona que el Círculo de Viena 'desechaba la opinión, que aún se sustenta mucho, de que existiera una diferencia radical entre las ciencias naturales y las ciencias sociales; la escala y la diversidad de fenómenos con que tratan las ciencias sociales las hace menos aptas para establecer leyes científicas, pero ésta era una dificultad práctica, no de principio: en última instancia, también tratan de acontecimientos físicos'. [cite: 304]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Qué autor es conocido por su obra Tractatus Logico-Philosophicus, que tuvo una enorme influencia en el movimiento positivista, aunque él mismo no se adhirió oficialmente al Círculo de Viena? [cite: 305]",
-                options: [
-                    "Moritz Schlick. [cite: 306]",
-                    "Rudolf Carnap. [cite: 306]",
-                    "Ludwig Wittgenstein. [cite: 306]",
-                    "Karl Popper. [cite: 306]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "A.J. Ayer destaca la especial relación de Wittgenstein con el Círculo de Viena y la 'enorme influencia' de su Tractatus Logico-Philosophicus sobre el movimiento, aunque Wittgenstein no fuera un miembro oficial. [cite: 307]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "¿Cuál fue uno de los principales motivos de la disolución del Círculo de Viena como grupo cohesionado en la década de 1930-1940? [cite: 308]",
-                options: [
-                    "Disputas internas irresolubles sobre el principio de verificación. [cite: 309]",
-                    "La falta de interés internacional en sus propuestas. [cite: 309]",
-                    "El asesinato de Rudolf Carnap y la falta de liderazgo. [cite: 310]",
-                    "El ascenso del nazismo, la muerte de Schlick y el exilio de la mayoría de sus miembros. [cite: 311]"
-                ],
-                correctAnswerIndex: 3,
-                explanation: "Ayer detalla que, aunque el movimiento ganaba fuerza, el Círculo en sí mismo estaba en proceso de disolución. [cite: 312] 'Hahn murió en 1934 y dos años más tarde Schlick fue asesinado'. [cite: 313] Además, 'La mayoría se vio obligada a ir al exilio; el advenimiento del nazismo también fue fatal para la Escuela de Berlín'. [cite: 314] Estos factores, junto con la guerra, llevaron a la pérdida de cohesión del movimiento. [cite: 315]"
-            },
-            {
-                section: "Neopositivismo",
-                question: "La actitud general de los positivistas lógicos hacia la historia de la filosofía era: [cite: 316]",
-                options: [
-                    "Considerarla como una fuente de verdades eternas que debían ser recuperadas. [cite: 316]",
-                    "Estudiarla detalladamente para encontrar precursores de sus propias ideas. [cite: 317]",
-                    "Verla, en gran medida, como una sucesión de errores metafísicos que debían superarse mediante el análisis lógico. [cite: 318]",
-                    "Ignorarla por completo, centrándose únicamente en los problemas científicos contemporáneos. [cite: 319]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Aunque el manifiesto del Círculo de Viena situaba al grupo en una tradición histórica y mencionaba precursores, la actitud general, como se desprende de su crítica a la metafísica y su énfasis en el análisis lógico, era la de superar los 'errores' de la filosofía especulativa tradicional. [cite: 320, 321] Ayer menciona que quienes son hostiles al desarrollo moderno de la filosofía analítica 'desearían incluir a todos sus adversarios en un mismo saco', implicando que los positivistas veían una ruptura con gran parte de la filosofía anterior. [cite: 321] Su objetivo era poner 'a la filosofía en la senda segura de una ciencia', lo que sugiere una superación de los enfoques previos. [cite: 322]"
-            },
-
-            // --- Karl Popper (10 Preguntas) ---
-            {
-                section: "Karl Popper",
-                question: "¿Cuál es la principal crítica de Karl Popper al método inductivo utilizado por los neopositivistas? [cite: 323]",
-                options: [
-                    "Que es demasiado complejo y difícil de aplicar en la práctica científica. [cite: 324]",
-                    "Que se basa excesivamente en la lógica formal y no considera la experimentación. [cite: 325]",
-                    "Que el 'salto inductivo' (concluir una ley general a partir de casos particulares) nunca puede establecer la verdad de una ley de manera concluyente, sino solo probable. [cite: 326]",
-                    "Que no permite la formulación de hipótesis audaces y revolucionarias. [cite: 327]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Popper señala el problema fundamental del método inductivo, que ya había sido planteado por Hume: el 'salto inductivo'. [cite: 328] Este se refiere al hecho de que, por muchos casos particulares que observemos, nunca podremos estar lógicamente seguros de que una ley general derivada de ellos sea universalmente verdadera. [cite: 329] Siempre existe la posibilidad de que un caso futuro la contradiga. [cite: 330] Por lo tanto, las leyes científicas basadas en la inducción solo pueden ser consideradas probables, no certezas absolutas. [cite: 331]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Qué criterio de demarcación propone Popper para distinguir la ciencia de la pseudociencia (o no-ciencia)? [cite: 332]",
-                options: [
-                    "El criterio de verificación empírica de los enunciados. [cite: 333]",
-                    "La capacidad de una teoría para explicar todos los fenómenos posibles. [cite: 333]",
-                    "El criterio de falsabilidad o refutabilidad de una conjetura o teoría. [cite: 334]",
-                    "El consenso de la comunidad científica sobre la validez de una teoría. [cite: 335]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Popper rechaza la verificación (o confirmación inductiva) como criterio de demarcación y propone en su lugar la falsabilidad (o refutabilidad). [cite: 336] Una teoría o conjetura es científica si es posible concebir un hecho o un experimento que, de ocurrir y contradecir las predicciones de la teoría, la refutaría o falsaría. [cite: 337] Los científicos deben proponer hipótesis que arriesguen ser falseadas. [cite: 338]"
-            },
-            {
-                section: "Karl Popper",
-                question: "Según Popper, ¿cuándo cuenta realmente una confirmación para una teoría científica? [cite: 338]",
-                options: [
-                    "Cuando la teoría ha sido aceptada por la mayoría de los científicos. [cite: 339]",
-                    "Cuando la confirmación es fácil de obtener y se repite muchas veces. [cite: 340]",
-                    "Cuando la confirmación es el resultado de una predicción riesgosa, es decir, cuando la teoría se expone a una prueba que podría haberla refutado. [cite: 341]",
-                    "Cuando la teoría puede ser expresada en lenguaje matemático preciso. [cite: 342]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Popper critica que es muy fácil obtener confirmaciones, especialmente para teorías vagas o pseudocientíficas. [cite: 343] Por ello, sostiene que 'las confirmaciones solo cuentan si son resultados de predicciones riesgosas'. [cite: 344] Una prueba riesgosa es aquella en la que la teoría corre un peligro real de ser refutada si la predicción no se cumple. [cite: 345]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Cuál es la postura de Popper respecto a la afirmación neopositivista de que el científico debe partir de observaciones puras o hechos neutrales sin interpretaciones previas? [cite: 347]",
-                options: [
-                    "Está de acuerdo, la observación neutral es la base de la objetividad científica. [cite: 348]",
-                    "Considera que la observación siempre está impregnada de alguna teoría, supuesto o interpretación por parte del científico. [cite: 349]",
-                    "Cree que solo en las ciencias sociales es imposible la observación neutral, pero en las ciencias naturales sí es posible. [cite: 350]",
-                    "Propone que el científico debe aspirar a la observación neutral, aunque sea un ideal inalcanzable. [cite: 351]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Popper critica la idea neopositivista de que un científico debe (o puede) partir de hechos observables tal cual se dan, sin teorías o interpretaciones previas. [cite: 352] En cambio, Popper afirma que 'todo científico siempre parte de algún supuesto, de alguna interpretación, de alguna conjetura. Siempre hay una carga teórica interpretativa desde el científico'. [cite: 353]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Qué método propone Popper como la lógica adecuada para la ciencia, en contraposición al inductivismo? [cite: 354]",
-                options: [
-                    "El método axiomático-deductivo. [cite: 354]",
-                    "El método de la intuición intelectual. [cite: 355]",
-                    "El método hipotético-deductivo. [cite: 355]",
-                    "El método dialéctico. [cite: 355]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Popper plantea que el método para la ciencia debe ser la lógica del método hipotético-deductivo. [cite: 356] Este método consiste en: 1. Formular una hipótesis o conjetura. 2. Deducir enunciados singulares o particulares a partir de esa hipótesis. [cite: 357] 3. Someter estos enunciados singulares a prueba mediante la experiencia (intentando falsarlos). [cite: 358] Si la experiencia corrobora los enunciados, la teoría se mantiene provisionalmente como corroborada; si la experiencia los contradice, la teoría es refutada. [cite: 359, 360] Popper argumenta que basta un solo fenómeno para refutar una teoría, lo que hace a este método más riguroso que el inductivo. [cite: 360]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Por qué Popper considera que teorías como el psicoanálisis no son científicas? [cite: 361]",
-                options: [
-                    "Porque sus conceptos son demasiado complejos para el entendimiento común. [cite: 362]",
-                    "Porque no utilizan modelos matemáticos en sus explicaciones. [cite: 362]",
-                    "Porque no conciben ningún hecho observable que, de ocurrir, pudiera refutarlas; no arriesgan tests que las puedan falsar. [cite: 363]",
-                    "Porque se originaron fuera del ámbito académico tradicional. [cite: 364]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Popper critica el psicoanálisis (y otras teorías como el marxismo en ciertas interpretaciones) porque, desde su perspectiva, estas teorías pueden explicar prácticamente cualquier comportamiento o evento dentro de su marco, y no especifican ninguna condición observable que, de darse, las refutaría. [cite: 364] 'Popper dice que las teorías psicoanalistas no arriesgan test que las puedan falsar, no prevén instancias que si se dan, invalidan o refutan la teoría'. [cite: 365]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Qué entiende Popper por una teoría 'corroborada'? [cite: 366]",
-                options: [
-                    "Una teoría que ha sido verificada y confirmada como verdadera de manera definitiva. [cite: 366]",
-                    "Una teoría que es popular y ampliamente aceptada por la comunidad científica. [cite: 367]",
-                    "Una teoría que, a pesar de ser científica, aún no ha sido sometida a ninguna prueba empírica. [cite: 368]",
-                    "Una teoría científica que ha resistido intentos serios y rigurosos de ser refutada o falsada, y que por lo tanto se mantiene provisionalmente. [cite: 369]"
-                ],
-                correctAnswerIndex: 3,
-                explanation: "Para Popper, una teoría nunca puede ser verificada de forma concluyente. En lugar de 'verificación', Popper habla de 'corroboración'. [cite: 371] Una teoría es corroborada cuando ha sido sometida a pruebas empíricas rigurosas (intentos de falsación) y las ha superado. [cite: 372] Esto no significa que la teoría sea verdadera en un sentido absoluto, sino que ha demostrado su temple y se mantiene como la mejor explicación disponible, de manera provisional, hasta que (y si) eventualmente sea refutada por nuevas pruebas. [cite: 373]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Cuál es la actitud que Popper considera que debe tener un científico hacia sus propias conjeturas o hipótesis? [cite: 374]",
-                options: [
-                    "Defenderlas a toda costa contra cualquier crítica, buscando solo evidencia confirmatoria. [cite: 375]",
-                    "Considerarlas como verdades absolutas una vez que han pasado algunas pruebas iniciales. [cite: 376]",
-                    "Estar abierto a la crítica y proponer pruebas riesgosas que puedan potencialmente refutar sus propias conjeturas. [cite: 377]",
-                    "Evitar la formulación de conjeturas audaces y limitarse a generalizaciones inductivas seguras. [cite: 378]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Popper valora una actitud crítica en la ciencia. [cite: 379] Sostiene que los científicos deben estar dispuestos a que sus conjeturas sean sometidas a prueba constantemente y, de hecho, deben ser ellos mismos quienes diseñen los 'tests o pruebas riesgosas' que puedan poner en jaque sus teorías. [cite: 380] No se trata de aferrarse a una idea, sino de exponerla a la posibilidad de ser falsada para avanzar en el conocimiento. [cite: 381]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿Cómo ve Popper el progreso científico? [cite: 382]",
-                options: [
-                    "Como una acumulación lineal y continua de verdades verificadas. [cite: 382]",
-                    "Como un proceso de ensayo y error, donde las teorías son conjeturas que se someten a refutación, y las que sobreviven son provisionalmente aceptadas. [cite: 383]",
-                    "Como un cambio de paradigmas inconmensurables, sin un progreso objetivo hacia la verdad. [cite: 384]",
-                    "Como algo imposible, dado que todas las teorías son igualmente válidas. [cite: 385]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Popper concibe el progreso científico no como una acumulación de verdades finales, sino como un proceso dinámico de ensayo y error. [cite: 386] Los científicos proponen conjeturas (hipótesis) audaces y luego intentan refutarlas mediante la experimentación y la crítica. [cite: 387] Las teorías que resisten estos intentos de falsación son corroboradas y se mantienen provisionalmente. [cite: 388] El conocimiento avanza al eliminar errores y proponer teorías que expliquen más o que resistan pruebas más severas. [cite: 389] Se busca la verosimilitud, un acercamiento progresivo a la verdad, aunque esta última pueda ser inalcanzable en sentido absoluto. [cite: 390]"
-            },
-            {
-                section: "Karl Popper",
-                question: "¿En qué punto coincide Popper con los neopositivistas, a pesar de sus críticas? [cite: 391]",
-                options: [
-                    "En la aceptación del método inductivo como la lógica de la ciencia. [cite: 392]",
-                    "En la valoración de la metafísica como una fuente de conocimiento. [cite: 393]",
-                    "En la importancia del 'contexto de justificación' para la epistemología, es decir, en el análisis del método por el cual las teorías son probadas y validadas. [cite: 394]",
-                    "En la idea de que los enunciados científicos pueden ser verificados de forma concluyente. [cite: 395]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "A pesar de sus diferencias significativas, una similitud entre Popper y los neopositivistas es la importancia que ambos otorgan al contexto de justificación. [cite: 396] Popper, al igual que ellos, distingue entre el contexto en que se descubre o formula una teoría (contexto de descubrimiento) y el contexto en que esta se justifica o valida. [cite: 397] Considera que la epistemología debe centrarse en este último, es decir, en los métodos y criterios para probar y justificar (o, en su caso, falsar) las teorías científicas. [cite: 398] La importancia radica en el método científico, aunque Popper proponga un método (falsación) diferente al de los neopositivistas (inducción verificacionista). [cite: 399]"
-            },
-            
-            // --- Thomas Kuhn (10 Preguntas) ---
-            {
-                section: "Thomas Kuhn",
-                question: "¿Cuál es el concepto central que Kuhn utiliza para describir una realización científica pasada que una comunidad científica particular reconoce durante cierto tiempo como fundamento para su práctica posterior, incluyendo leyes, teorías, aplicaciones e instrumentación? [cite: 401]",
-                options: [
-                    "Hipótesis auxiliar. [cite: 402]",
-                    "Revolución científica. [cite: 402]",
-                    "Paradigma. [cite: 402]",
-                    "Anomalía. [cite: 402]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kuhn define un paradigma como 'algunos ejemplos aceptados de la práctica científica real -ejemplos que incluyen, al mismo tiempo, ley, teoría, aplicación e instrumentación- [que] proporcionan modelos de los que surgen tradiciones particularmente coherentes de investigación científica'. [cite: 403] Estos paradigmas son la base de lo que él llama 'ciencia normal'. [cite: 404]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "¿Qué entiende Kuhn por 'ciencia normal'? [cite: 404]",
-                options: [
-                    "Un período de crisis y debate constante sobre los fundamentos de una disciplina. [cite: 405]",
-                    "La investigación basada firmemente en uno o más paradigmas compartidos, donde los científicos se dedican a resolver 'enigmas' dentro de ese marco. [cite: 406]",
-                    "El proceso de descubrimiento de nuevas teorías que rompen radicalmente con las anteriores. [cite: 407]",
-                    "Una etapa pre-científica caracterizada por la ausencia de un método común. [cite: 408]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Kuhn describe la 'ciencia normal' como la investigación basada firmemente en realizaciones científicas pasadas, reconocidas por una comunidad científica como fundamento para su práctica posterior. [cite: 409] Durante la ciencia normal, la actividad se predica suponiendo que la comunidad científica sabe cómo es el mundo y se dedica a la resolución de 'enigmas', que son problemas que se espera resolver dentro de los términos del paradigma vigente. [cite: 410]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "Según Kuhn, ¿qué es una 'anomalía'? [cite: 411]",
-                options: [
-                    "Un descubrimiento científico completamente nuevo que inmediatamente reemplaza un paradigma. [cite: 411]",
-                    "Un consenso dentro de la comunidad científica sobre la validez de una teoría. [cite: 412]",
-                    "Un problema que, a pesar de los esfuerzos reiterados de los científicos, no puede ser resuelto utilizando las reglas y procedimientos del paradigma vigente. [cite: 413]",
-                    "Una teoría que ha sido falsada y abandonada por la comunidad científica. [cite: 414]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Una 'anomalía' surge cuando un problema normal, que debería resolverse mediante los métodos y conceptos del paradigma actual, se resiste a los intentos de solución. [cite: 415] También puede ser el caso de un equipo experimental que no produce los resultados esperados, revelando algo que no encaja con las expectativas profesionales. [cite: 416] Las anomalías son, en esencia, contraejemplos o resultados inesperados que el paradigma vigente tiene dificultades para explicar. [cite: 417]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "¿Qué ocurre, según Kuhn, cuando las anomalías se acumulan y comienzan a subvertir la tradición existente de prácticas científicas? [cite: 418]",
-                options: [
-                    "La comunidad científica ignora las anomalías y continúa trabajando como si nada. [cite: 419]",
-                    "Se produce un retorno a la etapa pre-paradigmática. [cite: 420]",
-                    "Se inicia un período de 'crisis' que puede llevar a investigaciones extraordinarias y, eventualmente, a una revolución científica. [cite: 420]",
-                    "La ciencia entra en un estado de estancamiento definitivo. [cite: 421]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Cuando la profesión científica ya no puede pasar por alto las anomalías que socavan la tradición de la ciencia normal, se inician 'investigaciones extraordinarias'. [cite: 422] Este período es descrito por Kuhn como una 'crisis' del paradigma vigente. [cite: 423] Esta crisis puede conducir finalmente a un nuevo conjunto de compromisos, es decir, a una revolución científica. [cite: 424]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "¿Qué caracteriza a una 'revolución científica' en la terminología de Kuhn? [cite: 425]",
-                options: [
-                    "Una mejora gradual y acumulativa del paradigma existente. [cite: 426]",
-                    "Un episodio extraordinario en el que se produce un cambio fundamental en los compromisos profesionales y en la base para la práctica de la ciencia. [cite: 426]",
-                    "La confirmación definitiva de una teoría a través de la verificación empírica. [cite: 427]",
-                    "Un debate filosófico sobre los métodos de la ciencia sin que cambien las teorías fundamentales. [cite: 428]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Las revoluciones científicas son 'los complementos que rompen la tradición a la que está ligada la actividad de la ciencia normal'. [cite: 429] Implican un cambio en los problemas admisibles, en las soluciones legítimas y transforman la imaginación científica, llevando a una 'transformación del mundo en que se llevaba a cabo el trabajo científico'. [cite: 430] Estos cambios de compromisos profesionales son lo que define a las revoluciones científicas. [cite: 431]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "El concepto de 'inconmensurabilidad' entre paradigmas, según Kuhn, implica que: [cite: 432]",
-                options: [
-                    "Los paradigmas diferentes siempre pueden ser comparados objetivamente utilizando un lenguaje neutro. [cite: 432]",
-                    "Los científicos que trabajan en paradigmas diferentes pueden tener desacuerdos fundamentales sobre los problemas a resolver y las normas de la ciencia, e incluso los términos pueden cambiar de significado. [cite: 433]",
-                    "Un paradigma nuevo siempre es una extensión lógica y acumulativa del paradigma anterior. [cite: 434]",
-                    "La ciencia progresa linealmente hacia una verdad única y absoluta, y todos los paradigmas son etapas hacia ella. [cite: 435]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "La inconmensurabilidad significa que 'los proponentes de paradigmas en competencia estarán a menudo en desacuerdo con respecto a la lista de problemas que cualquier candidato a paradigma deba resolver. Sus normas o sus definiciones de la ciencia serán diferentes'. [cite: 436] Además, aunque los nuevos paradigmas pueden usar vocabulario y aparatos de los antiguos, estos elementos 'entran en relaciones diferentes unos con otros' en el nuevo paradigma. Esto dificulta la comparación directa y la traducción perfecta entre paradigmas. [cite: 437]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "¿Cuál es la postura de Kuhn respecto a la idea de que la ciencia progresa de manera lineal y acumulativa hacia una descripción cada vez más verdadera de un mundo real? [cite: 437]",
-                options: [
-                    "La apoya firmemente, mostrando cómo los paradigmas se construyen unos sobre otros.",
-                    "La cuestiona, argumentando que la historia de la ciencia muestra rupturas, revoluciones y cambios en la forma de ver el mundo, no solo una acumulación. [cite: 438]",
-                    "Considera que el progreso acumulativo solo ocurre durante las revoluciones científicas. [cite: 438]",
-                    "Afirma que no hay ningún tipo de progreso en la ciencia, solo cambios arbitrarios de teorías. [cite: 438]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Kuhn critica la imagen de la ciencia como una empresa puramente acumulativa. [cite: 439] Su análisis histórico sugiere que el desarrollo científico está marcado por períodos de ciencia normal (donde sí hay acumulación dentro de un paradigma) interrumpidos por revoluciones científicas que implican un cambio fundamental en la visión del mundo y en los compromisos de la comunidad científica. [cite: 439] El progreso a través de las revoluciones no es simplemente una adición al conocimiento existente, sino una reestructuración. [cite: 440]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "Según Kuhn, ¿cuál es el papel de los libros de texto científicos en la 'ciencia normal'? [cite: 441]",
-                options: [
-                    "Presentar la historia completa de las controversias y paradigmas descartados de una disciplina. [cite: 442]",
-                    "Fomentar el pensamiento crítico y la duda constante sobre los fundamentos del paradigma actual. [cite: 443]",
-                    "Relatar las realizaciones científicas pasadas que la comunidad reconoce como fundamento para su práctica, aunque raramente en su forma original. [cite: 444]",
-                    "Servir principalmente como fuente de anécdotas históricas sobre grandes científicos. [cite: 445]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kuhn indica que las realizaciones científicas pasadas, que son la base de la ciencia normal, 'son relatadas, aunque raramente en su forma original, por los libros de texto científicos, tanto elementales como avanzados'. [cite: 446] Los libros de texto tienden a presentar una versión lineal y pulida de la historia, consolidando el paradigma vigente. [cite: 447]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "¿Cómo describe Kuhn la actitud de la comunidad científica durante un período de 'ciencia normal' frente a las innovaciones fundamentales? [cite: 448]",
-                options: [
-                    "Las acogen con entusiasmo, buscando constantemente revolucionar su campo. [cite: 449]",
-                    "Las evalúan objetivamente y las incorporan si demuestran ser superiores. [cite: 450]",
-                    "Frecuentemente las suprimen, debido a que resultan necesariamente subversivas para sus compromisos básicos con el paradigma. [cite: 451]",
-                    "Son indiferentes a ellas, centrándose únicamente en la aplicación tecnológica del conocimiento existente. [cite: 452]"
-                ],
-                correctAnswerIndex: 2,
-                explanation: "Kuhn afirma que 'la ciencia normal suprime frecuentemente innovaciones fundamentales, debido a que resultan necesariamente subversivas para sus compromisos básicos'. [cite: 453] Esto se debe a que la ciencia normal opera bajo el supuesto de que la comunidad ya sabe cómo es el mundo, y las innovaciones radicales amenazan esa estabilidad. [cite: 454]"
-            },
-            {
-                section: "Thomas Kuhn",
-                question: "¿Qué implicación tiene la 'inconmensurabilidad' para la comunicación entre proponentes de paradigmas en competencia? [cite: 455]",
-                options: [
-                    "La comunicación es imposible y los científicos de diferentes paradigmas no pueden entenderse en absoluto. [cite: 456]",
-                    "Aunque puede haber desacuerdos sobre normas y el significado de términos, la comunicación y la persuasión siguen siendo posibles, aunque difíciles. [cite: 457]",
-                    "La comunicación es fluida, ya que todos los términos científicos tienen significados fijos y precisos. [cite: 458]",
-                    "La comunicación solo es posible a través de la traducción a un lenguaje puramente lógico y formal. [cite: 459]"
-                ],
-                correctAnswerIndex: 1,
-                explanation: "Si bien la inconmensurabilidad implica que 'los proponentes de paradigmas en competencia estarán a menudo en desacuerdo con respecto a la lista de problemas' y que 'los términos, los conceptos y los experimentos antiguos entran en relaciones diferentes unos con otros', Kuhn no sugiere que la comunicación sea absolutamente imposible. [cite: 460] Habla de 'controversias' y 'persuasión', lo que implica algún grado de entendimiento, aunque la elección entre paradigmas no pueda resolverse solo por la lógica o la prueba neutral, ya que los estándares mismos están en debate. [cite: 461]"
-            }
-        ];
-
-        // Procesar las preguntas para quitarles las citas
-        const questions = rawQuestions.map(q => ({
-            ...q,
-            question: removeCitations(q.question),
-            options: q.options.map(opt => removeCitations(opt)),
-            explanation: removeCitations(q.explanation)
-        }));
-
-
-        const questionTextElement = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const explanationElement = document.getElementById('explanation');
-        const scoreTextElement = document.getElementById('score-text');
-        const nextBtn = document.getElementById('next-btn');
-        const resultsArea = document.getElementById('results-area');
-        const finalScoreTextElement = document.getElementById('final-score-text');
-        const restartBtn = document.getElementById('restart-btn');
-        const questionArea = document.getElementById('question-area');
-        const feedbackArea = document.getElementById('feedback-area');
-        const scoreArea = document.getElementById('score-area');
-        const questionCounterElement = document.getElementById('question-counter');
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let shuffledQuestions = [];
-
-        function shuffleArray(array) {
-            let newArray = [...array]; 
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
+    ],
+    'Aristóteles': [
+        {
+            'pregunta': '¿Qué es el hilemorfismo para Aristóteles?',
+            'opciones': [
+                'La separación radical entre alma y cuerpo.',
+                'La teoría de que todo ser es un compuesto de materia (hyle) y forma (morphé).',
+                'La creencia en un mundo de formas puras.',
+                'Un método para clasificar a los seres vivos.'
+            ],
+            'respuestaCorrecta': 'La teoría de que todo ser es un compuesto de materia (hyle) y forma (morphé).',
+            'justificacion': 'Correcto. El hilemorfismo es la doctrina central de Aristóteles que sostiene que toda sustancia individual es una unión inseparable de materia (potencia) y forma (acto). La materia es de lo que está hecho algo, y la forma es lo que hace que sea lo que es.'
+        },
+        {
+            'pregunta': '¿Cuál de las siguientes NO es una de las cuatro causas de Aristóteles?',
+            'opciones': [
+                'Causa Material.',
+                'Causa Formal.',
+                'Causa Eficiente.',
+                'Causa Trascendental.'
+            ],
+            'respuestaCorrecta': 'Causa Trascendental.',
+            'justificacion': 'Correcto. Las cuatro causas son material (de qué está hecho), formal (su esencia), eficiente (quién lo hizo) y final (su propósito). La noción de "trascendental" es propia de la filosofía de Kant, no de Aristóteles.'
+        },
+        {
+            'pregunta': '¿Cómo concibe Aristóteles la relación entre alma y cuerpo?',
+            'opciones': [
+                'Como una unión accidental, donde el cuerpo es la cárcel del alma.',
+                'Como una unión sustancial, donde el alma es la forma y el principio vital del cuerpo.',
+                'Como dos entidades que no interactúan entre sí.',
+                'Como una ilusión, ya que solo existe el cuerpo.'
+            ],
+            'respuestaCorrecta': 'Como una unión sustancial, donde el alma es la forma y el principio vital del cuerpo.',
+            'justificacion': 'Correcto. A diferencia de Platón, Aristóteles ve la unión como sustancial e inseparable. El alma no es inmortal (salvo el intelecto agente) y es la forma que actualiza la materia del cuerpo, dándole vida.'
+        },
+        {
+            'pregunta': '¿Cuál es la principal crítica de Aristóteles a la Teoría de las Ideas de Platón?',
+            'opciones': [
+                'Que las Ideas son demasiado simples.',
+                'Que las Ideas no son eternas.',
+                'Que duplica innecesariamente la realidad y no explica el cambio en el mundo sensible.',
+                'Que no hay suficientes Ideas para explicar el mundo.'
+            ],
+            'respuestaCorrecta': 'Que duplica innecesariamente la realidad y no explica el cambio en el mundo sensible.',
+            'justificacion': 'Correcto. Aristóteles argumentó que al postular un mundo de Ideas separado, Platón creaba más problemas de los que resolvía, describiéndolo como un "duplicado de las cosas totalmente absurdo". Especialmente criticó que las Ideas, siendo estáticas e inmutables, no pueden ser la causa del movimiento y el cambio en el mundo sensible.'
+        },
+        {
+            'pregunta': 'Los conceptos de "acto" y "potencia" en Aristóteles sirven para explicar:',
+            'opciones': [
+                'La inmortalidad del alma.',
+                'La existencia de las Ideas.',
+                'El cambio y el movimiento (el devenir).',
+                'La estructura de la sociedad ideal.'
+            ],
+            'respuestaCorrecta': 'El cambio y el movimiento (el devenir).',
+            'justificacion': 'Correcto. La potencia es la capacidad de llegar a ser algo, mientras que el acto es la realización de esa capacidad. El cambio es el paso de la potencia al acto. Por ejemplo, una semilla (potencia) se convierte en un árbol (acto).'
         }
-
-        function startQuiz() {
-            shuffledQuestions = shuffleArray(questions);
-            currentQuestionIndex = 0;
-            score = 0;
-            scoreTextElement.textContent = `Puntuación: ${score}`;
-            resultsArea.style.display = 'none';
-            questionArea.style.display = 'block';
-            feedbackArea.style.display = 'block';
-            scoreArea.style.display = 'block';
-            nextBtn.style.display = 'none';
-            explanationElement.style.display = 'none';
-            questionCounterElement.style.display = 'block'; // Asegurarse que el contador se muestre
-            loadQuestion();
+    ],
+    'Descartes': [
+        {
+            'pregunta': '¿Cuál es el primer principio indubitable de la filosofía de Descartes?',
+            'opciones': [
+                '"Dios existe".',
+                '"El mundo exterior es real".',
+                '"Pienso, luego existo" (Cogito, ergo sum).',
+                '"Los sentidos son fiables".'
+            ],
+            'respuestaCorrecta': '"Pienso, luego existo" (Cogito, ergo sum).',
+            'justificacion': 'Correcto. Después de someter todo a la duda metódica (incluidos los sentidos, el mundo externo y las matemáticas), Descartes encuentra en el acto mismo de pensar la certeza irrefutable de su propia existencia como una "cosa que piensa".'
+        },
+        {
+            'pregunta': '¿Qué son la "res cogitans" y la "res extensa" en el dualismo cartesiano?',
+            'opciones': [
+                'Dos tipos de pensamiento.',
+                'La sustancia pensante (mente/alma) y la sustancia material (cuerpo/mundo).',
+                'El bien y el mal.',
+                'Ideas innatas y adventicias.'
+            ],
+            'respuestaCorrecta': 'La sustancia pensante (mente/alma) y la sustancia material (cuerpo/mundo).',
+            'justificacion': 'Correcto. Descartes divide la realidad en dos tipos de sustancia fundamentalmente distintas e independientes: la res cogitans, cuya esencia es el pensamiento (inmaterial y no sujeta a leyes físicas), y la res extensa, cuya esencia es la extensión en el espacio (material y regida por leyes físicas).'
+        },
+        {
+            'pregunta': '¿Cuál de las siguientes es una regla del método de Descartes?',
+            'opciones': [
+                'La regla de la probabilidad.',
+                'La regla de la falsación.',
+                'La regla del análisis: dividir cada dificultad en tantas partes como sea posible para su mejor solución.',
+                'La regla de la acumulación de datos.'
+            ],
+            'respuestaCorrecta': 'La regla del análisis: dividir cada dificultad en tantas partes como sea posible para su mejor solución.',
+            'justificacion': 'Correcto. El método cartesiano consta de cuatro reglas: 1. Evidencia (aceptar solo lo claro y distinto), 2. Análisis (dividir los problemas), 3. Síntesis (ir de lo simple a lo complejo), y 4. Enumeración (revisar para no omitir nada).'
+        },
+        {
+            'pregunta': 'Según Descartes, las ideas se clasifican en:',
+            'opciones': [
+                'Simples, complejas y abstractas.',
+                'Verdaderas, falsas y dudosas.',
+                'Innatas, adventicias (externas) y facticias (inventadas).',
+                'Sensibles, inteligibles y divinas.'
+            ],
+            'respuestaCorrecta': 'Innatas, adventicias (externas) y facticias (inventadas).',
+            'justificacion': 'Correcto. Descartes distingue tres tipos de ideas según su origen: las innatas que nacen con nosotros (como la idea de Dios), las adventicias que parecen venir del exterior (como el calor del sol) y las facticias que son invenciones del espíritu (como un unicornio).'
+        },
+        {
+            'pregunta': '¿Qué argumento utiliza Descartes en la duda metódica para cuestionar la realidad del mundo externo?',
+            'opciones': [
+                'El argumento de la imperfección de Dios.',
+                'El argumento de la imposibilidad de distinguir el sueño de la vigilia.',
+                'El argumento de la relatividad cultural.',
+                'El argumento del lenguaje privado.'
+            ],
+            'respuestaCorrecta': 'El argumento de la imposibilidad de distinguir el sueño de la vigilia.',
+            'justificacion': 'Correcto. Uno de los momentos clave de la duda es cuando Descartes se da cuenta de que no hay "indicios concluyentes" para saber con certeza si está despierto o soñando, ya que los sueños pueden ser tan vívidos como la realidad.'
         }
-
-        function loadQuestion() {
-            explanationElement.style.display = 'none';
-            explanationElement.classList.remove('explanation-correct');
-            nextBtn.style.display = 'none'; 
-
-            const currentQuestion = shuffledQuestions[currentQuestionIndex];
-            questionTextElement.innerHTML = `<strong>(${currentQuestion.section})</strong> ${currentQuestion.question}`; 
-            questionCounterElement.textContent = `Pregunta ${currentQuestionIndex + 1} de ${shuffledQuestions.length}`;
-            
-            optionsContainer.innerHTML = ''; 
-
-            currentQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.innerHTML = option; 
-                button.addEventListener('click', () => selectAnswer(index, button));
-                optionsContainer.appendChild(button);
-            });
+    ],
+    'Hume': [
+        {
+            'pregunta': '¿Cuál es la fuente y el límite de todo conocimiento para Hume?',
+            'opciones': [
+                'La razón pura.',
+                'Las ideas innatas.',
+                'La experiencia sensible.',
+                'La autoridad de los filósofos.'
+            ],
+            'respuestaCorrecta': 'La experiencia sensible.',
+            'justificacion': 'Correcto. Como empirista radical, Hume sostiene que todo el contenido de nuestra mente (percepciones) se deriva de la experiencia sensorial. Por ello, no podemos conocer nada que esté más allá de los límites de la experiencia.'
+        },
+        {
+            'pregunta': '¿Qué diferencia establece Hume entre "impresiones" e "ideas"?',
+            'opciones': [
+                'Las impresiones son falsas y las ideas son verdaderas.',
+                'Las impresiones son complejas y las ideas son simples.',
+                'Las impresiones son nuestras percepciones más intensas y vívidas, mientras que las ideas son copias más débiles de estas.',
+                'No hay ninguna diferencia, son sinónimos.'
+            ],
+            'respuestaCorrecta': 'Las impresiones son nuestras percepciones más intensas y vívidas, mientras que las ideas son copias más débiles de estas.',
+            'justificacion': 'Correcto. La distinción se basa en el grado de "fuerza y vivacidad". Las impresiones son las sensaciones y emociones directas y más intensas. Las ideas o pensamientos son las copias menos intensas que evocamos en la memoria o la imaginación.'
+        },
+        {
+            'pregunta': 'Según Hume, ¿en qué se basa nuestra creencia en la causalidad (causa y efecto)?',
+            'opciones': [
+                'En una ley lógica de la razón.',
+                'En la observación de una "conexión necesaria" en la naturaleza.',
+                'En el hábito o la costumbre de observar que dos eventos ocurren siempre juntos.',
+                'En una revelación divina.'
+            ],
+            'respuestaCorrecta': 'En el hábito o la costumbre de observar que dos eventos ocurren siempre juntos.',
+            'justificacion': 'Correcto. Hume argumenta que nunca observamos la "conexión necesaria" entre causa y efecto. Lo único que experimentamos es la conjunción constante de dos objetos. Es el hábito o la costumbre lo que determina a la mente a esperar uno tras la aparición del otro.'
+        },
+        {
+            'pregunta': '¿A través de qué principios explica Hume la asociación de ideas?',
+            'opciones': [
+                'Lógica, Análisis y Síntesis.',
+                'Duda, Certeza y Evidencia.',
+                'Semejanza, Contigüidad (en tiempo o espacio) y Causa y Efecto.',
+                'Impresión, Memoria e Imaginación.'
+            ],
+            'respuestaCorrecta': 'Semejanza, Contigüidad (en tiempo o espacio) y Causa y Efecto.',
+            'justificacion': 'Correcto. Hume sostiene que existen tres principios de conexión entre ideas: la semejanza (una pintura nos recuerda al original), la contigüidad (la mención de una habitación nos lleva a pensar en las demás del edificio) y la causa y efecto (pensar en una herida nos lleva a pensar en el dolor).'
+        },
+        {
+            'pregunta': '¿Cuál es la diferencia entre "cuestiones de hecho" y "relaciones de ideas" para Hume?',
+            'opciones': [
+                'Las cuestiones de hecho son a priori y las relaciones de ideas son a posteriori.',
+                'Las cuestiones de hecho se refieren a la lógica y las relaciones de ideas al mundo.',
+                'Las relaciones de ideas son verdades demostrativas (como la geometría) y las cuestiones de hecho se basan en la experiencia y la causalidad.',
+                'No hay diferencia, ambas se basan en la experiencia.'
+            ],
+            'respuestaCorrecta': 'Las relaciones de ideas son verdades demostrativas (como la geometría) y las cuestiones de hecho se basan en la experiencia y la causalidad.',
+            'justificacion': 'Correcto. Hume divide el conocimiento en dos tipos: las relaciones de ideas (ciencias como la geometría, cuya verdad se descubre por el pensamiento) y las cuestiones de hecho (se refieren al mundo, se basan en la experiencia y su contrario siempre es posible).'
         }
-
-        function selectAnswer(selectedIndex, selectedButton) {
-            const currentQuestion = shuffledQuestions[currentQuestionIndex];
-            const correctIndex = currentQuestion.correctAnswerIndex;
-
-            Array.from(optionsContainer.children).forEach(btn => {
-                btn.disabled = true;
-            });
-
-            explanationElement.innerHTML = `<strong>Explicación:</strong> ${currentQuestion.explanation}`;
-            explanationElement.style.display = 'block';
-
-            if (selectedIndex === correctIndex) {
-                score++;
-                selectedButton.classList.add('correct');
-                explanationElement.classList.add('explanation-correct'); 
-                scoreTextElement.textContent = `Puntuación: ${score}`;
-            } else {
-                selectedButton.classList.add('incorrect');
-                optionsContainer.children[correctIndex].classList.add('correct');
-                explanationElement.classList.remove('explanation-correct'); 
-            }
-
-            nextBtn.style.display = 'block';
-            explanationElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    ],
+    'Kant': [
+        {
+            'pregunta': '¿Qué significa el "giro copernicano" de Kant en filosofía?',
+            'opciones': [
+                'Que la Tierra gira alrededor del Sol.',
+                'Que la filosofía debe basarse en la astronomía.',
+                'Que el conocimiento no gira en torno al objeto, sino que es el objeto el que se adapta a las estructuras a priori del sujeto para poder ser conocido.',
+                'Que la moral depende de la religión.'
+            ],
+            'respuestaCorrecta': 'Que el conocimiento no gira en torno al objeto, sino que es el objeto el que se adapta a las estructuras a priori del sujeto para poder ser conocido.',
+            'justificacion': 'Correcto. Kant propone que el sujeto no es un receptor pasivo, sino que impone activamente sus estructuras a priori (como el espacio, el tiempo y las categorías del entendimiento) para constituir el objeto de conocimiento. El conocimiento gira en torno al sujeto, no al objeto.'
+        },
+        {
+            'pregunta': '¿Qué tipo de juicios considera Kant que son propios de la ciencia?',
+            'opciones': [
+                'Juicios analíticos a posteriori.',
+                'Juicios sintéticos a posteriori.',
+                'Juicios analíticos a priori.',
+                'Juicios sintéticos a priori.'
+            ],
+            'respuestaCorrecta': 'Juicios sintéticos a priori.',
+            'justificacion': 'Correcto. La ciencia, para Kant, debe ser capaz de aumentar nuestro conocimiento (sintéticos) y, a la vez, ser universal y necesaria, no dependiendo de la experiencia (a priori). Explicar cómo son posibles estos juicios es el objetivo central de su "Crítica de la Razón Pura".'
+        },
+        {
+            'pregunta': 'En la frase "Aunque todo nuestro conocimiento comience con la experiencia, no por eso procede todo él de la experiencia", ¿qué implica "a priori" y "a posteriori"?',
+            'opciones': [
+                'A priori es la experiencia y a posteriori es la razón.',
+                'A priori es el conocimiento independiente de la experiencia y a posteriori es el conocimiento que depende de ella.',
+                'Ambos son conocimientos que provienen de la experiencia.',
+                'A priori es falso y a posteriori es verdadero.'
+            ],
+            'respuestaCorrecta': 'A priori es el conocimiento independiente de la experiencia y a posteriori es el conocimiento que depende de ella.',
+            'justificacion': 'Correcto. Kant distingue entre el conocimiento a posteriori, que es empírico y se deriva de la experiencia, y el conocimiento a priori, que es independiente de la experiencia, universal y necesario, y que el sujeto aporta a través de sus facultades de conocimiento.'
+        },
+        {
+            'pregunta': '¿Cuál es la diferencia entre "fenómeno" y "noúmeno" en Kant?',
+            'opciones': [
+                'Fenómeno es lo falso y noúmeno es lo verdadero.',
+                'Fenómeno es la cosa tal como se nos aparece a través de nuestras estructuras cognitivas, y noúmeno es la cosa en sí misma, incognoscible.',
+                'Fenómeno es el objeto de la razón y noúmeno el de los sentidos.',
+                'Son dos nombres para la misma realidad.'
+            ],
+            'respuestaCorrecta': 'Fenómeno es la cosa tal como se nos aparece a través de nuestras estructuras cognitivas, y noúmeno es la cosa en sí misma, incognoscible.',
+            'justificacion': 'Correcto. Nuestro conocimiento se limita a los fenómenos, que son el resultado de la síntesis entre los datos sensibles y nuestras estructuras a priori. El noúmeno, o la realidad independiente de nuestro modo de conocer ("la cosa en sí"), puede ser pensado pero no conocido por la razón teórica.'
+        },
+        {
+            'pregunta': 'Para Kant, el conocimiento es una síntesis entre:',
+            'opciones': [
+                'Fe y razón.',
+                'Cuerpo y alma.',
+                'Conceptos del entendimiento e intuiciones de la sensibilidad.',
+                'Lo analítico y lo dialéctico.'
+            ],
+            'respuestaCorrecta': 'Conceptos del entendimiento e intuiciones de la sensibilidad.',
+            'justificacion': 'Correcto. Kant afirma que "los pensamientos sin contenido son vacíos; las intuiciones sin conceptos son ciegas". El conocimiento requiere tanto de la materia prima de la experiencia (intuiciones sensibles) como de las estructuras que el entendimiento impone para pensarla (conceptos o categorías).'
         }
-
-        nextBtn.addEventListener('click', () => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < shuffledQuestions.length) {
-                loadQuestion();
-                questionCounterElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                showResults();
-            }
-        });
-
-        restartBtn.addEventListener('click', startQuiz);
-
-        function showResults() {
-            questionArea.style.display = 'none';
-            feedbackArea.style.display = 'none';
-            scoreArea.style.display = 'none';
-            nextBtn.style.display = 'none';
-            questionCounterElement.style.display = 'none';
-            
-            resultsArea.style.display = 'block';
-            finalScoreTextElement.textContent = `¡Quiz Completado! Tu puntuación final es: ${score} de ${shuffledQuestions.length}`;
-            resultsArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    ],
+    'Neopositivismo': [
+        {
+            'pregunta': '¿Cuál era el objetivo principal del Círculo de Viena?',
+            'opciones': [
+                'Promover la metafísica especulativa.',
+                'Unificar la ciencia a través de un lenguaje lógico y un método empírico, rechazando la metafísica.',
+                'Criticar el uso de la lógica en la filosofía.',
+                'Defender el relativismo en el conocimiento.'
+            ],
+            'respuestaCorrecta': 'Unificar la ciencia a través de un lenguaje lógico y un método empírico, rechazando la metafísica.',
+            'justificacion': 'Correcto. El proyecto del neopositivismo era establecer una "concepción científica del mundo" unificada (ciencia unificada). Para ello, buscaban eliminar la metafísica por considerarla un sinsentido y basar todo conocimiento en la experiencia (empirismo) y el análisis lógico del lenguaje.'
+        },
+        {
+            'pregunta': 'El criterio de significado del positivismo lógico, conocido como "principio de verificabilidad", establece que un enunciado es significativo si:',
+            'opciones': [
+                'Es aceptado por la mayoría de los científicos.',
+                'Es poéticamente inspirador.',
+                'Es una proposición formal (tautología) o es verificable empíricamente (fáctica).',
+                'Proviene de un filósofo reconocido.'
+            ],
+            'respuestaCorrecta': 'Es una proposición formal (tautología) o es verificable empíricamente (fáctica).',
+            'justificacion': 'Correcto. Para ellos, solo hay dos tipos de proposiciones con sentido: las formales o tautológicas (como las de la lógica y las matemáticas) y las fácticas (que requieren ser verificables empíricamente). Todo lo demás, como los enunciados metafísicos, carecía de significado.'
+        },
+        {
+            'pregunta': '¿Qué método de investigación defendían los neopositivistas para formular leyes generales?',
+            'opciones': [
+                'El método deductivo.',
+                'El método inductivo.',
+                'La intuición.',
+                'La dialéctica.'
+            ],
+            'respuestaCorrecta': 'El método inductivo.',
+            'justificacion': 'Correcto. Consideraban que el procedimiento para la investigación científica era el método inductivo, que parte de la observación de hechos particulares para luego, mediante la experimentación y la repetición, llegar a una conclusión general o ley universal.'
+        },
+        {
+            'pregunta': '¿Por qué la metafísica no cumple con el criterio de significatividad del Neopositivismo?',
+            'opciones': [
+                'Porque es demasiado antigua.',
+                'Porque sus enunciados no son ni tautologías lógicas ni pueden ser verificados por la experiencia.',
+                'Porque no utiliza un lenguaje simbólico.',
+                'Porque no es aceptada por la comunidad científica.'
+            ],
+            'respuestaCorrecta': 'Porque sus enunciados no son ni tautologías lógicas ni pueden ser verificados por la experiencia.',
+            'justificacion': 'Correcto. Los enunciados metafísicos (ej. "el fundamento del mundo es lo inconsciente") son considerados pseudoproblemas. No son proposiciones formales (como 2+2=4) ni fácticas (como "el agua hierve a 100°C"), por lo tanto, no pueden ser verificados y carecen de sentido cognoscitivo.'
+        },
+        {
+            'pregunta': 'La propuesta del "fisicalismo" del Círculo de Viena sostiene que:',
+            'opciones': [
+                'Solo la física es una ciencia verdadera.',
+                'Todos los enunciados científicos, incluidos los de la psicología, deben poder traducirse a un lenguaje sobre objetos físicos observables.',
+                'La mente es una sustancia inmaterial.',
+                'El universo está compuesto únicamente de partículas físicas.'
+            ],
+            'respuestaCorrecta': 'Todos los enunciados científicos, incluidos los de la psicología, deben poder traducirse a un lenguaje sobre objetos físicos observables.',
+            'justificacion': 'Correcto. El fisicalismo es una tesis clave para lograr la ciencia unificada. Propone que todos los enunciados con significado pueden ser reducidos o traducidos al lenguaje de la física, que se considera el lenguaje universal de la ciencia por referirse a lo públicamente observable.'
         }
+    ],
+    'Popper': [
+        {
+            'pregunta': '¿Cuál es el criterio de demarcación entre ciencia y no-ciencia propuesto por Karl Popper?',
+            'opciones': [
+                'La verificabilidad.',
+                'La inducción.',
+                'La falsabilidad o refutabilidad.',
+                'La simplicidad.'
+            ],
+            'respuestaCorrecta': 'La falsabilidad o refutabilidad.',
+            'justificacion': 'Correcto. Popper argumenta que lo que define a una teoría como científica no es que pueda ser verificada (ya que las leyes universales nunca pueden serlo), sino que pueda ser refutada o falsada por la experiencia. Una teoría debe formularse de modo que sea posible encontrar un contraejemplo empírico.'
+        },
+        {
+            'pregunta': '¿Cómo avanza la ciencia según Popper?',
+            'opciones': [
+                'Acumulando hechos verificados.',
+                'Mediante un proceso de ensayo y error: conjeturas y refutaciones.',
+                'Confirmando las teorías más probables.',
+                'A través de revoluciones de paradigmas.'
+            ],
+            'respuestaCorrecta': 'Mediante un proceso de ensayo y error: conjeturas y refutaciones.',
+            'justificacion': 'Correcto. La ciencia progresa eliminando teorías falsas. Los científicos proponen hipótesis audaces (conjeturas) y luego las someten a críticas y pruebas rigurosas para intentar refutarlas. Las que sobreviven a estos intentos son aceptadas provisionalmente.'
+        },
+        {
+            'pregunta': '¿Cuál es la principal crítica de Popper al método inductivo?',
+            'opciones': [
+                'Es demasiado complicado de aplicar.',
+                'Carece de justificación lógica, ya que de enunciados singulares no se pueden inferir teorías universales.',
+                'Solo funciona en las ciencias sociales.',
+                'Es demasiado lento para el progreso científico.'
+            ],
+            'respuestaCorrecta': 'Carece de justificación lógica, ya que de enunciados singulares no se pueden inferir teorías universales.',
+            'justificacion': 'Correcto. Popper retoma el problema de Hume para argumentar que es lógicamente inadmisible inferir teorías a partir de enunciados singulares. No importa cuántos cisnes blancos veamos, nunca podremos concluir lógicamente que "todos los cisnes son blancos".'
+        },
+        {
+            'pregunta': '¿Por qué la verificabilidad no es un criterio de cientificidad válido para Popper?',
+            'opciones': [
+                'Porque ninguna teoría científica universal puede ser verificada de modo concluyente por un número finito de observaciones.',
+                'Porque solo las teorías falsas pueden ser verificadas.',
+                'Porque la verificación es un proceso subjetivo.',
+                'Porque la verificación solo se aplica a las matemáticas.'
+            ],
+            'respuestaCorrecta': 'Porque ninguna teoría científica universal puede ser verificada de modo concluyente por un número finito de observaciones.',
+            'justificacion': 'Correcto. Popper rechaza la verificación porque las teorías científicas (leyes universales) se refieren a un número infinito de casos, y es imposible verificarlos todos empíricamente. Por el contrario, un solo contraejemplo es suficiente para refutarla, lo que crea una asimetría lógica a favor de la falsación.'
+        },
+        {
+            'pregunta': 'En lugar de buscar la "verdad", Popper afirma que el objetivo de la ciencia es alcanzar una mayor:',
+            'opciones': [
+                'Complejidad.',
+                'Aceptación social.',
+                'Utilidad práctica.',
+                'Verosimilitud.'
+            ],
+            'respuestaCorrecta': 'Verosimilitud.',
+            'justificacion': 'Correcto. Dado que nunca podemos estar seguros de haber alcanzado la verdad definitiva, Popper sostiene que la ciencia progresa hacia teorías con mayor verosimilitud, es decir, teorías que explican más hechos, tienen mayor poder predictivo y han resistido mejor los intentos de falsación.'
+        }
+    ],
+    'Kuhn': [
+        {
+            'pregunta': '¿Qué es la "ciencia normal" en el modelo de Thomas Kuhn?',
+            'opciones': [
+                'Un período de crisis y debate constante.',
+                'La ciencia que se hace antes de que exista un paradigma.',
+                'La investigación basada firmemente en un paradigma compartido, dedicada a resolver "enigmas" sin cuestionar los fundamentos.',
+                'Un tipo de ciencia que no progresa.'
+            ],
+            'respuestaCorrecta': 'La investigación basada firmemente en un paradigma compartido, dedicada a resolver "enigmas" sin cuestionar los fundamentos.',
+            'justificacion': 'Correcto. La ciencia normal es la actividad en la que la mayoría de los científicos pasan su tiempo, investigando sobre la base de realizaciones científicas pasadas que una comunidad reconoce como fundamento para su práctica. Su objetivo no es producir novedades, sino articular y ampliar el alcance del paradigma vigente.'
+        },
+        {
+            'pregunta': 'Un "cambio de paradigma" o "revolución científica" ocurre, según Kuhn, cuando:',
+            'opciones': [
+                'Se acumula suficiente evidencia para verificar una nueva teoría.',
+                'Un científico famoso propone una idea novedosa.',
+                'Se acumulan "anomalías" que el paradigma actual no puede resolver, generando una crisis y la aparición de un nuevo paradigma incompatible.',
+                'Los científicos se cansan de la teoría antigua.'
+            ],
+            'respuestaCorrecta': 'Se acumulan "anomalías" que el paradigma actual no puede resolver, generando una crisis y la aparición de un nuevo paradigma incompatible.',
+            'justificacion': 'Correcto. Las revoluciones son "episodios de desarrollo no acumulativo". Ocurren cuando las anomalías (problemas que se resisten a ser solucionados) subvierten la tradición de la ciencia normal, llevando a una crisis y finalmente a un nuevo conjunto de compromisos, es decir, un nuevo paradigma.'
+        },
+        {
+            'pregunta': 'El concepto de "inconmensurabilidad" de Kuhn se refiere a que:',
+            'opciones': [
+                'Todos los paradigmas son igualmente válidos.',
+                'Los paradigmas son tan grandes que no se pueden medir.',
+                'Los paradigmas rivales no pueden compararse de forma neutral porque carecen de un lenguaje, problemas y estándares de solución comunes.',
+                'La ciencia es una empresa irracional.'
+            ],
+            'respuestaCorrecta': 'Los paradigmas rivales no pueden compararse de forma neutral porque carecen de un lenguaje, problemas y estándares de solución comunes.',
+            'justificacion': 'Correcto. La inconmensurabilidad significa que los proponentes de paradigmas en competencia no pueden compararlos o traducirlos fácilmente entre sí. Discrepan sobre la lista de problemas a resolver y sus definiciones de ciencia son diferentes. Los términos, conceptos y experimentos cambian de relación y significado en el nuevo paradigma.'
+        },
+        {
+            'pregunta': '¿Qué rol juega la "comunidad científica" en la teoría de Kuhn?',
+            'opciones': [
+                'Es un obstáculo para el progreso científico.',
+                'Es irrelevante; solo importan los genios individuales.',
+                'Es la portadora y defensora del paradigma, y la que, a través del consenso, decide en las revoluciones.',
+                'Solo se encarga de financiar la investigación.'
+            ],
+            'respuestaCorrecta': 'Es la portadora y defensora del paradigma, y la que, a través del consenso, decide en las revoluciones.',
+            'justificacion': 'Correcto. Para Kuhn, la ciencia es una actividad comunitaria. La comunidad científica es la que reconoce ciertas realizaciones como fundamento para su práctica, compartiendo reglas y normas. El paradigma existe porque es compartido por esta comunidad.'
+        },
+        {
+            'pregunta': 'La etapa "pre-científica" o "pre-paradigmática" se caracteriza por:',
+            'opciones': [
+                'Un rápido progreso acumulativo.',
+                'La existencia de un único paradigma dominante.',
+                'El debate constante entre escuelas rivales sin un consenso sobre los fundamentos.',
+                'La ausencia total de investigación empírica.'
+            ],
+            'respuestaCorrecta': 'El debate constante entre escuelas rivales sin un consenso sobre los fundamentos.',
+            'justificacion': 'Correcto. Antes de que se establezca un paradigma, un campo de estudio se encuentra en un estado de desorganización, con múltiples escuelas compitiendo, cada una construyendo el campo desde sus propios fundamentos y sin un acuerdo común sobre métodos o problemas relevantes.'
+        }
+    ],
+    'Feyerabend': [
+        {
+            'pregunta': '¿Cuál es el lema que resume el "anarquismo epistemológico" de Paul Feyerabend?',
+            'opciones': [
+                '"Solo la falsabilidad cuenta".',
+                '"La ciencia debe ser unificada".',
+                '"Todo sirve" (Anything goes).',
+                '"La razón por encima de todo".'
+            ],
+            'respuestaCorrecta': '"Todo sirve" (Anything goes).',
+            'justificacion': 'Correcto. Este lema expresa su rechazo radical a la idea de que existe un único método científico universal y válido. Defiende el pluralismo metodológico, sosteniendo que cualquier regla puede y debe ser transgredida para fomentar el progreso científico.'
+        },
+        {
+            'pregunta': '¿Por qué Feyerabend considera a la ciencia una "empresa profundamente anarquista"?',
+            'opciones': [
+                'Porque cree que los científicos buscan el desorden político.',
+                'Porque la historia de la ciencia demuestra que los grandes avances se lograron violando las reglas metodológicas existentes.',
+                'Porque la ciencia carece de lógica y estructura.',
+                'Porque los científicos no siguen ninguna norma ética.'
+            ],
+            'respuestaCorrecta': 'Porque la historia de la ciencia demuestra que los grandes avances se lograron violando las reglas metodológicas existentes.',
+            'justificacion': 'Correcto. Feyerabend argumenta que si se examina la historia, se ve que la ciencia no avanza por seguir un método fijo, sino por la creatividad, el oportunismo y la violación de las reglas. La idea de un método fijo es una reconstrucción posterior que no se corresponde con la práctica real y que, de haberse seguido, habría inhibido el progreso.'
+        },
+        {
+            'pregunta': 'La "contrainducción" es una estrategia propuesta por Feyerabend que consiste en:',
+            'opciones': [
+                'Seguir el método inductivo de forma más rigurosa.',
+                'Introducir y elaborar hipótesis que contradigan directamente teorías y hechos bien establecidos.',
+                'Rechazar cualquier tipo de generalización.',
+                'Verificar las teorías en lugar de falsarlas.'
+            ],
+            'respuestaCorrecta': 'Introducir y elaborar hipótesis que contradigan directamente teorías y hechos bien establecidos.',
+            'justificacion': 'Correcto. Feyerabend defiende la contrainducción como una estrategia necesaria. Argumenta que la evidencia que podría refutar una teoría dominante a menudo solo puede descubrirse con la ayuda de una alternativa incompatible.'
+        }
+    ],
+    'Foucault': [
+        {
+            'pregunta': 'Según Foucault, el descubrimiento del inconsciente por Freud significó para las ciencias humanas:',
+            'opciones': [
+                'Una simple adición de un nuevo tema de estudio.',
+                'La confirmación de la psicología como ciencia de la conciencia y del individuo.',
+                'Una "reorganización y nuevo recorte", donde la definición de psicología como ciencia de la conciencia ya no puede ser válida.',
+                'Un retroceso hacia la metafísica.'
+            ],
+            'respuestaCorrecta': 'Una "reorganización y nuevo recorte", donde la definición de psicología como ciencia de la conciencia ya no puede ser válida.',
+            'justificacion': 'Correcto. Foucault argumenta que el descubrimiento freudiano reconfiguró profundamente las ciencias humanas. La psicología heredada del siglo XVIII como "ciencia de la conciencia y del individuo" se vuelve insostenible una vez que se toma en cuenta la existencia del inconsciente, que muestra que el sujeto está determinado por estructuras que escapan a su conciencia.'
+        },
+        {
+            'pregunta': 'Para Foucault, la tarea del psicoanálisis frente al inconsciente no es tanto una interpretación sino un problema de:',
+            'opciones': [
+                'Verificación empírica.',
+                'Construcción lógica.',
+                'Decodificación o desciframiento.',
+                'Clasificación de síntomas.'
+            ],
+            'respuestaCorrecta': 'Decodificación o desciframiento.',
+            'justificacion': 'Correcto. Foucault sostiene que el método freudiano es de decodificación. El inconsciente se presenta como un mensaje cifrado, y el trabajo analítico consiste en encontrar la clave para averiguar lo que realmente quiere decir, clave que está contenida en el propio mensaje.'
+        },
+        {
+            'pregunta': 'La relación entre saber y poder para Foucault implica que:',
+            'opciones': [
+                'El saber es una fuerza neutral que se opone al poder.',
+                'El poder siempre reprime y oculta el verdadero saber.',
+                'No hay relación de poder sin la constitución de un campo de saber, ni saber que no presuponga y constituya relaciones de poder.',
+                'El saber es exclusivo de los intelectuales y el poder del Estado.'
+            ],
+            'respuestaCorrecta': 'No hay relación de poder sin la constitución de un campo de saber, ni saber que no presuponga y constituya relaciones de poder.',
+            'justificacion': 'Correcto. Para Foucault, saber y poder están intrínsecamente ligados. El poder no solo reprime, sino que produce saber, y el saber legitima y refuerza las relaciones de poder. Son dos caras de la misma moneda.'
+        }
+    ],
+    'Morin': [
+        {
+            'pregunta': '¿Qué critica Edgar Morin con el concepto de "paradigma de la simplicidad"?',
+            'opciones': [
+                'La búsqueda de la claridad en la ciencia.',
+                'El uso de las matemáticas.',
+                'La tendencia de la ciencia clásica a separar lo que está ligado (disyunción) y a unificar lo diverso anulando las diferencias (reducción).',
+                'La falta de especialización en la investigación.'
+            ],
+            'respuestaCorrecta': 'La tendencia de la ciencia clásica a separar lo que está ligado (disyunción) y a unificar lo diverso anulando las diferencias (reducción).',
+            'justificacion': 'Correcto. Morin critica que el paradigma de la simplicidad pone orden persiguiendo al desorden, separa lo que está ligado (disyunción) y unifica lo diverso (reducción). Este pensamiento simplificante produce una "inteligencia ciega" que destruye los conjuntos y las totalidades, siendo incapaz de concebir la complejidad de lo real.'
+        },
+        {
+            'pregunta': '¿Qué significa "complejo" en el contexto de la obra de Edgar Morin?',
+            'opciones': [
+                'Algo muy difícil o imposible de entender.',
+                'Un sinónimo de "complicado".',
+                'Un tejido de constituyentes heterogéneos inseparablemente asociados, que presenta la paradoja de lo uno y lo múltiple.',
+                'Un sistema desorganizado y caótico.'
+            ],
+            'respuestaCorrecta': 'Un tejido de constituyentes heterogéneos inseparablemente asociados, que presenta la paradoja de lo uno y lo múltiple.',
+            'justificacion': 'Correcto. Para Morin, la complejidad es, efectivamente, "un tejido (...) de constituyentes heterogéneos inseparablemente asociados". Es el tejido de eventos, acciones, interacciones y retroacciones que constituyen nuestro mundo fenoménico, afrontando la incertidumbre y la contradicción.'
+        },
+        {
+            'pregunta': '¿Cuál es la diferencia que establece Morin entre "racionalidad" y "racionalización"?',
+            'opciones': [
+                'No hay diferencia, son lo mismo.',
+                'La racionalidad es un diálogo abierto con lo real, mientras que la racionalización es un sistema lógico cerrado que rechaza lo que no encaja en él.',
+                'La racionalidad es propia de la filosofía y la racionalización de la ciencia.',
+                'La racionalidad es emocional y la racionalización es lógica.'
+            ],
+            'respuestaCorrecta': 'La racionalidad es un diálogo abierto con lo real, mientras que la racionalización es un sistema lógico cerrado que rechaza lo que no encaja en él.',
+            'justificacion': 'Correcto. Morin distingue la racionalidad, que dialoga con un mundo que la resiste, de la racionalización, que es una patología de la razón que encierra lo real en un sistema coherente y descarta todo lo que lo contradice, tomándolo por ilusión o error.'
+        }
+    ],
+    'Haraway': [
+        {
+            'pregunta': '¿Qué critica Donna Haraway a la objetividad científica tradicional?',
+            'opciones': [
+                'Que es demasiado difícil de alcanzar.',
+                'Que es una "visión desde ninguna parte" o "truco de dios" que en realidad esconde una perspectiva dominante, masculina y militarizada.',
+                'Que se basa demasiado en la matemática.',
+                'Que no es suficientemente empírica.'
+            ],
+            'respuestaCorrecta': 'Que es una "visión desde ninguna parte" o "truco de dios" que en realidad esconde una perspectiva dominante, masculina y militarizada.',
+            'justificacion': 'Correcto. Haraway denuncia la objetividad tradicional como una mirada que pretende ser universal y neutral pero que en realidad es una "visión militarizada, racista y por sobre todo masculina" que opera sin hacerse responsable de su propia ubicación y poder.'
+        },
+        {
+            'pregunta': '¿Cuál es la propuesta de Haraway para una visión feminista de la epistemología?',
+            'opciones': [
+                'Un relativismo radical donde todas las opiniones valen lo mismo.',
+                'Una objetividad total y absoluta accesible solo a los grupos oprimidos.',
+                'La defensa de los "conocimientos situados" y una "objetividad encarnada".',
+                'Rechazar completamente la ciencia por ser patriarcal.'
+            ],
+            'respuestaCorrecta': 'La defensa de los "conocimientos situados" y una "objetividad encarnada".',
+            'justificacion': 'Correcto. Frente al "truco de dios", Haraway propone una visión parcial y conocimientos situados, conscientes de sus propios límites. Esto conduce a una objetividad encarnada, que reconoce que todo conocimiento parte de una perspectiva localizada en un cuerpo, y que la responsabilidad, no la neutralidad, es la clave para un saber más fiable.'
+        },
+        {
+            'pregunta': '¿Qué critica Haraway a las dicotomías tradicionales como naturaleza/cultura o humano/animal?',
+            'opciones': [
+                'Que son necesarias para el pensamiento científico claro.',
+                'Que son divisiones rígidas que simplifican la complejidad del mundo y perpetúan jerarquías.',
+                'Que la cultura siempre debe dominar a la naturaleza.',
+                'Que los humanos son fundamentalmente diferentes de los animales.'
+            ],
+            'respuestaCorrecta': 'Que son divisiones rígidas que simplifican la complejidad del mundo y perpetúan jerarquías.',
+            'justificacion': 'Correcto. Haraway cuestiona estas dicotomías por ser construcciones que ocultan las interconexiones y relaciones. Propone figuras como el "cyborg" para pensar más allá de estas divisiones y abogar por una visión "enredada" de la realidad.'
+        }
+    ]
+};
 
-        startQuiz();
-    </script>
+
+
+   // --- LÓGICA DEL JUEGO (MODIFICADA PARA OPCIÓN MÚLTIPLE) ---
+
+   // Referencias a elementos del DOM
+   const pantallaInicio = document.getElementById('pantalla-inicio');
+   const pantallaQuiz = document.getElementById('pantalla-quiz');
+   const pantallaFinal = document.getElementById('pantalla-final');
+   
+   const opcionesDocumentosContainer = document.getElementById('opciones-documentos');
+   const btnIniciar = document.getElementById('btn-iniciar');
+   const errorSeleccion = document.getElementById('error-seleccion');
+   const contadorPreguntaEl = document.getElementById('contador-pregunta');
+   const preguntasRestantesEl = document.getElementById('preguntas-restantes');
+   const puntuacionActualEl = document.getElementById('puntuacion-actual');
+   const textoPreguntaEl = document.getElementById('texto-pregunta');
+   const btnLeerPregunta = document.getElementById('btn-leer-pregunta');
+   const iconoVolumenOn = document.getElementById('icono-volumen-on');
+   const iconoVolumenOff = document.getElementById('icono-volumen-off');
+   const opcionesRespuestaContainer = document.getElementById('opciones-respuesta');
+   const feedbackEl = document.getElementById('feedback');
+   const mensajeFinalEl = document.getElementById('mensaje-final');
+   const puntuacionFinalTextoEl = document.getElementById('puntuacion-final-texto');
+   const btnReiniciar = document.getElementById('btn-reiniciar');
+
+   // Variables de estado del juego
+   let preguntasSeleccionadas = [];
+   let preguntaActualIndex = 0;
+   let puntuacion = 0;
+   let btnSiguiente; 
+   let lecturaAutomaticaActivada = false;
+
+   // Función para leer texto en voz alta
+   function leerEnVozAlta(texto, onEndCallback) {
+       speechSynthesis.cancel();
+       if ('speechSynthesis' in window) {
+           const utterance = new SpeechSynthesisUtterance(texto);
+           utterance.lang = 'es-ES'; 
+           utterance.rate = 0.9;
+           if (onEndCallback) {
+               utterance.onend = onEndCallback;
+           }
+           speechSynthesis.speak(utterance);
+       } else {
+           console.warn("Tu navegador no soporta la lectura en voz alta.");
+       }
+   }
+   
+   // Función para alternar el estado de lectura automática
+   function toggleLecturaAutomatica() {
+       lecturaAutomaticaActivada = !lecturaAutomaticaActivada;
+       btnLeerPregunta.classList.toggle('activo', lecturaAutomaticaActivada);
+       iconoVolumenOn.style.display = lecturaAutomaticaActivada ? 'block' : 'none';
+       iconoVolumenOff.style.display = lecturaAutomaticaActivada ? 'none' : 'block';
+       if (!lecturaAutomaticaActivada) {
+           speechSynthesis.cancel();
+       } else {
+           leerEnVozAlta(textoPreguntaEl.textContent);
+       }
+   }
+
+   // Función para generar las opciones de figuras
+   function popularOpcionesDocumentos() {
+       opcionesDocumentosContainer.innerHTML = ''; 
+       const figuras = Object.keys(preguntas_db);
+       figuras.forEach(figura => {
+           const checkboxId = `figura-${figura.replace(/\s+/g, '-')}`;
+           const label = document.createElement('label');
+           label.setAttribute('for', checkboxId);
+           label.textContent = figura;
+
+           const checkbox = document.createElement('input');
+           checkbox.type = 'checkbox';
+           checkbox.id = checkboxId;
+           checkbox.value = figura;
+
+           opcionesDocumentosContainer.appendChild(checkbox);
+           opcionesDocumentosContainer.appendChild(label);
+       });
+   }
+
+   // Función para iniciar el juego
+   function iniciarJuego() {
+       const checkboxes = document.querySelectorAll('#opciones-documentos input[type="checkbox"]:checked');
+       if (checkboxes.length === 0) {
+           errorSeleccion.style.display = 'block';
+           return;
+       }
+       errorSeleccion.style.display = 'none';
+       
+       preguntasSeleccionadas = [];
+       checkboxes.forEach(cb => {
+           preguntasSeleccionadas.push(...preguntas_db[cb.value]);
+       });
+       preguntasSeleccionadas.sort(() => Math.random() - 0.5);
+
+       puntuacion = 0;
+       preguntaActualIndex = 0;
+       
+       pantallaInicio.style.display = 'none';
+       pantallaQuiz.style.display = 'block';
+       pantallaFinal.style.display = 'none';
+       mostrarSiguientePregunta();
+   }
+
+   // Función para mostrar la siguiente pregunta
+   function mostrarSiguientePregunta() {
+       speechSynthesis.cancel();
+       if (preguntaActualIndex >= preguntasSeleccionadas.length) {
+           mostrarPantallaFinal();
+           return;
+       }
+
+       limpiarFeedback();
+       const preguntaActual = preguntasSeleccionadas[preguntaActualIndex];
+       const preguntasTotales = preguntasSeleccionadas.length;
+       
+       contadorPreguntaEl.textContent = `Pregunta ${preguntaActualIndex + 1} de ${preguntasTotales}`;
+       preguntasRestantesEl.textContent = `Quedan: ${preguntasTotales - (preguntaActualIndex + 1)}`;
+       puntuacionActualEl.textContent = `Puntuación: ${puntuacion}`;
+       textoPreguntaEl.textContent = preguntaActual.pregunta;
+
+       opcionesRespuestaContainer.innerHTML = '';
+       preguntaActual.opciones.forEach(opcion => {
+           const button = document.createElement('button');
+           button.textContent = opcion;
+           button.classList.add('btn', 'btn-opcion');
+           button.addEventListener('click', () => seleccionarRespuesta(opcion));
+           opcionesRespuestaContainer.appendChild(button);
+       });
+
+       if (lecturaAutomaticaActivada) {
+           leerEnVozAlta(preguntaActual.pregunta);
+       }
+   }
+
+   // Función para manejar la selección de respuesta
+   function seleccionarRespuesta(respuestaUsuario) {
+       const preguntaActual = preguntasSeleccionadas[preguntaActualIndex];
+       const esCorrecto = respuestaUsuario === preguntaActual.respuestaCorrecta;
+       
+       const botonesOpcion = opcionesRespuestaContainer.querySelectorAll('.btn-opcion');
+       botonesOpcion.forEach(button => {
+           button.disabled = true;
+           if (button.textContent === preguntaActual.respuestaCorrecta) {
+               button.classList.add('correcto');
+           }
+           if (button.textContent === respuestaUsuario && !esCorrecto) {
+               button.classList.add('incorrecto');
+           }
+       });
+
+       let textoFeedback;
+       if (esCorrecto) {
+           puntuacion++;
+           textoFeedback = `Correcto. ${preguntaActual.justificacion}`;
+           feedbackEl.innerHTML = `
+               <h3>¡Correcto!</h3>
+               <p class="justificacion">${preguntaActual.justificacion}</p>
+           `;
+           feedbackEl.classList.add('correcto');
+       } else {
+           textoFeedback = `Incorrecto. ${preguntaActual.justificacion}`;
+           feedbackEl.innerHTML = `
+               <h3>Incorrecto</h3>
+               <p>La respuesta correcta era: <strong>${preguntaActual.respuestaCorrecta}</strong></p>
+               <p class="justificacion">${preguntaActual.justificacion}</p>
+           `;
+           feedbackEl.classList.add('incorrecto');
+       }
+       
+       puntuacionActualEl.textContent = `Puntuación: ${puntuacion}`;
+       preguntaActualIndex++;
+
+       if (lecturaAutomaticaActivada) {
+           leerEnVozAlta(textoFeedback, crearBotonSiguiente);
+       } else {
+           crearBotonSiguiente();
+       }
+   }
+   
+   function crearBotonSiguiente() {
+       if (feedbackEl.querySelector('#btn-siguiente')) return;
+
+       btnSiguiente = document.createElement('button');
+       btnSiguiente.id = 'btn-siguiente';
+       btnSiguiente.className = 'btn';
+       btnSiguiente.textContent = (preguntaActualIndex >= preguntasSeleccionadas.length) ? 'Ver Resultados' : 'Siguiente Pregunta';
+       feedbackEl.appendChild(btnSiguiente);
+       btnSiguiente.addEventListener('click', mostrarSiguientePregunta);
+   }
+
+   function limpiarFeedback() {
+       feedbackEl.innerHTML = '';
+       feedbackEl.className = '';
+   }
+
+   function mostrarPantallaFinal() {
+       pantallaQuiz.style.display = 'none';
+       pantallaFinal.style.display = 'block';
+       const total = preguntasSeleccionadas.length;
+       const porcentaje = total > 0 ? Math.round((puntuacion / total) * 100) : 0;
+       puntuacionFinalTextoEl.innerHTML = `Tu puntuación final es: <strong>${puntuacion} / ${total}</strong> (${porcentaje}%)`;
+       
+       let mensaje;
+       if (porcentaje === 100) {
+           mensaje = '¡Felicidades! ¡Dominio total de la materia!';
+       } else if (porcentaje >= 80) {
+           mensaje = '¡Excelente trabajo! Tienes un gran conocimiento.';
+       } else if (porcentaje >= 60) {
+            mensaje = '¡Buen intento! Estás en camino, sigue repasando.';
+       } else {
+           mensaje = 'Sigue estudiando para fortalecer tus conocimientos.';
+       }
+       mensajeFinalEl.textContent = mensaje;
+       if (lecturaAutomaticaActivada) {
+           leerEnVozAlta(`Fin del juego. Tu puntuación final es ${puntuacion} de ${total}. ${mensaje}`);
+       }
+   }
+
+   // Event Listeners
+   btnIniciar.addEventListener('click', iniciarJuego);
+   btnReiniciar.addEventListener('click', () => {
+       speechSynthesis.cancel();
+       pantallaFinal.style.display = 'none';
+       pantallaInicio.style.display = 'block';
+       popularOpcionesDocumentos();
+   });
+   btnLeerPregunta.addEventListener('click', toggleLecturaAutomatica);
+   
+   // Inicializar la aplicación
+   popularOpcionesDocumentos();
+
+</script>
 </body>
 </html>
